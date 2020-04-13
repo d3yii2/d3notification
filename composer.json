@@ -1,0 +1,23 @@
+{
+    "name": "d3yii2/d3notification",
+    "description": "Notification registry",
+    "type": "library",
+    "keywords": ["yii2", "notification", "registry"],
+    "license": "BSD-4-Clause",
+    "authors": [
+        {
+            "name": "Uldis Nelsons",
+            "email": "uldis@weberp.lv",
+            "homepage": "http://www.weberp.lv/"
+        }
+    ],
+    "homepage": "https://github.com/d3yii2/d3notification",
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "d3yii2\\d3notification\\": ""
+        }
+    }
+}
