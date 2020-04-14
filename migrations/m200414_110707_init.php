@@ -55,7 +55,8 @@ class m200414_110707_init  extends Migration {
     }
 
     public function safeDown() {
-        echo "m200414_110707_init cannot be reverted.\n";
-        return false;
+        $this->execute('DROP TABLE `d3n_status_history`;');
+        $this->execute('DROP TABLE `d3n_notification`;');
+        $this->execute('DROP TABLE `d3n_status`;');
     }
 }
