@@ -24,7 +24,7 @@ to the `require` section of your `composer.json` file.
 
 ## DB
 
-[DB]: https://github.com/d3yii2/d3notification/doc/DbSchema.png
+![DB strukture](https://github.com/d3yii2/d3notification/blob/master/doc/DbSchema.png)
 
 ## Methods
 
