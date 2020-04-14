@@ -63,7 +63,6 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
             [['data'], 'string'],
             [['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
-            [['sys_company_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3cCompany::className(), 'targetAttribute' => ['sys_company_id' => 'id']]
         ];
     }
 
@@ -98,14 +97,6 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
     public function getStatus()
     {
         return $this->hasOne(\d3yii2\d3notification\models\D3nStatus::className(), ['id' => 'status_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSysCompany()
-    {
-        return $this->hasOne(\d3yii2\d3notification\models\D3cCompany::className(), ['id' => 'sys_company_id']);
     }
 
     /**

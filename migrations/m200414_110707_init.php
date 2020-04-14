@@ -33,8 +33,7 @@ class m200414_110707_init  extends Migration {
               KEY `status_id` (`status_id`),
               KEY `sys_company_id` (`sys_company_id`),
               CONSTRAINT `d3n_notification_ibfk_1` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`),
-              CONSTRAINT `d3n_notification_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`),
-              CONSTRAINT `d3n_notification_ibfk_3` FOREIGN KEY (`sys_company_id`) REFERENCES `d3c_company` (`id`)
+              CONSTRAINT `d3n_notification_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
         ');

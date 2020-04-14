@@ -6,8 +6,8 @@
 <canvas zoom="100">
 <tables>
 <table name="d3n_notification" view="colnames">
-<left>397</left>
-<top>297</top>
+<left>393</left>
+<top>283</top>
 <width>134</width>
 <height>219</height>
 <sql_create_table>CREATE TABLE `d3n_notification` (
@@ -24,8 +24,7 @@
   KEY `status_id` (`status_id`),
   KEY `sys_company_id` (`sys_company_id`),
   CONSTRAINT `d3n_notification_ibfk_1` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`),
-  CONSTRAINT `d3n_notification_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`),
-  CONSTRAINT `d3n_notification_ibfk_3` FOREIGN KEY (`sys_company_id`) REFERENCES `d3c_company` (`id`)
+  CONSTRAINT `d3n_notification_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="sys_models" view="colnames">
@@ -73,36 +72,6 @@
   CONSTRAINT `d3n_status_history_ibfk_1` FOREIGN KEY (`notification_id`) REFERENCES `d3n_notification` (`id`),
   CONSTRAINT `d3n_status_history_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
-</table>
-<table name="d3c_company" view="colnames">
-<left>151</left>
-<top>311</top>
-<width>189</width>
-<height>284</height>
-<sql_create_table>CREATE TABLE `d3c_company` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `regcode` char(30) NOT NULL COMMENT 'Registration number',
-  `sepa` char(20) DEFAULT NULL COMMENT 'VAT',
-  `name` varchar(255) NOT NULL COMMENT 'Name',
-  `legal_type` enum('Juridical person','Natural person') NOT NULL DEFAULT 'Juridical person' COMMENT 'Legal Type',
-  `type_id` smallint(5) unsigned DEFAULT NULL COMMENT 'Type',
-  `country_id` tinyint(3) unsigned DEFAULT NULL COMMENT 'Country',
-  `address` varchar(255) DEFAULT NULL COMMENT 'Address',
-  `office_address` text COMMENT 'Office Address',
-  `status` enum('PARTNER','AUTH','CLOSED') DEFAULT NULL COMMENT 'Status',
-  `reg_partnet_company_id` smallint(5) unsigned DEFAULT NULL COMMENT 'RegistredPartner',
-  `comunication_language_id` tinyint(3) unsigned DEFAULT NULL COMMENT 'Comunication language',
-  `deleted` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Deleted',
-  PRIMARY KEY (`id`),
-  KEY `reg_partnet_company_id` (`reg_partnet_company_id`),
-  KEY `type_id` (`type_id`),
-  KEY `country_id` (`country_id`),
-  KEY `d3c_company_ibfk_comLang` (`comunication_language_id`),
-  CONSTRAINT `d3c_company_ibfk_1` FOREIGN KEY (`reg_partnet_company_id`) REFERENCES `d3c_company` (`id`),
-  CONSTRAINT `d3c_company_ibfk_2` FOREIGN KEY (`country_id`) REFERENCES `cl_countries` (`id`),
-  CONSTRAINT `d3c_company_ibfk_comLang` FOREIGN KEY (`comunication_language_id`) REFERENCES `cl_language` (`id`),
-  CONSTRAINT `d3c_company_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3c_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=259 DEFAULT CHARSET=utf8</sql_create_table>
 </table>
 </tables>
 </canvas>
