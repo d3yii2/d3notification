@@ -28,7 +28,7 @@
   CONSTRAINT `d3n_notification_ibfk_1` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`),
   CONSTRAINT `d3n_notification_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`),
   CONSTRAINT `d3n_notification_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2331 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=2996 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="sys_models" view="colnames">
 <left>575</left>
@@ -44,8 +44,8 @@
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=ascii</sql_create_table>
 </table>
 <table name="d3n_status" view="colnames">
-<left>734</left>
-<top>381</top>
+<left>719</left>
+<top>401</top>
 <width>116</width>
 <height>131</height>
 <sql_create_table>CREATE TABLE `d3n_status` (
@@ -77,8 +77,8 @@
 ) ENGINE=InnoDB AUTO_INCREMENT=666 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3n_type" view="colnames">
-<left>234</left>
-<top>457</top>
+<left>245</left>
+<top>454</top>
 <width>116</width>
 <height>131</height>
 <sql_create_table>CREATE TABLE `d3n_type` (
@@ -89,7 +89,7 @@
   KEY `id` (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   CONSTRAINT `d3n_type_ibfk_sys_model` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 </tables>
 </canvas>
