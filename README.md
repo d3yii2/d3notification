@@ -22,6 +22,22 @@ or add
 
 to the `require` section of your `composer.json` file.
 
+## To console config add migration
+```php
+return [
+    'controllerMap' => [
+        'migrate' => [
+            'class' => 'yii\console\controllers\MigrateController',
+            'migrationPath' => [
+                '@vendor/d3yii2/d3notification/migrations',
+            ]
+        ],
+    ]
+];   
+
+
+```
+
 ## DB
 
 ![DB strukture](https://github.com/d3yii2/d3notification/blob/master/doc/DbSchema.png)

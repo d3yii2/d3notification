@@ -15,13 +15,14 @@ use Yii;
  * @property integer $sys_model_id
  * @property integer $model_record_id
  * @property integer $key
+ * @property integer $type_id
  * @property integer $status_id
  * @property string $data
  *
- * @property \d3yii2\d3notification\models\D3nStatusHistory[] $d3nStatusHistories
- * @property \d3yii2\d3notification\models\D3nStatus $status
- * @property \d3yii2\d3notification\models\D3cCompany $sysCompany
  * @property \d3yii2\d3notification\models\SysModels $sysModel
+ * @property \d3yii2\d3notification\models\D3nStatus $status
+ * @property \d3yii2\d3notification\models\D3nType $type
+ * @property \d3yii2\d3notification\models\D3nStatusHistory[] $d3nStatusHistories
  * @property string $aliasModel
  */
 abstract class D3nNotification extends \yii\db\ActiveRecord
@@ -56,13 +57,14 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
     {
         return [
             'tinyint Unsigned' => [['sys_model_id'],'integer' ,'min' => 0 ,'max' => 255],
-            'smallint Unsigned' => [['sys_company_id','status_id'],'integer' ,'min' => 0 ,'max' => 65535],
+            'smallint Unsigned' => [['sys_company_id','type_id','status_id'],'integer' ,'min' => 0 ,'max' => 65535],
             'integer Unsigned' => [['id','model_record_id','key'],'integer' ,'min' => 0 ,'max' => 4294967295],
             [['sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'status_id'], 'required'],
             [['time'], 'safe'],
             [['data'], 'string'],
             [['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
+            [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']]
         ];
     }
 
@@ -78,6 +80,7 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
             'sys_model_id' => Yii::t('d3notification', 'Sys Model ID'),
             'model_record_id' => Yii::t('d3notification', 'Model Record ID'),
             'key' => Yii::t('d3notification', 'Key'),
+            'type_id' => Yii::t('d3notification', 'Type ID'),
             'status_id' => Yii::t('d3notification', 'Status ID'),
             'data' => Yii::t('d3notification', 'Data'),
         ];
@@ -86,9 +89,9 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getD3nStatusHistories()
+    public function getSysModel()
     {
-        return $this->hasMany(\d3yii2\d3notification\models\D3nStatusHistory::className(), ['notification_id' => 'id']);
+        return $this->hasOne(\d3yii2\d3notification\models\SysModels::className(), ['id' => 'sys_model_id']);
     }
 
     /**
@@ -102,9 +105,17 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSysModel()
+    public function getType()
     {
-        return $this->hasOne(\d3yii2\d3notification\models\SysModels::className(), ['id' => 'sys_model_id']);
+        return $this->hasOne(\d3yii2\d3notification\models\D3nType::className(), ['id' => 'type_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getD3nStatusHistories()
+    {
+        return $this->hasMany(\d3yii2\d3notification\models\D3nStatusHistory::className(), ['notification_id' => 'id']);
     }
 
 

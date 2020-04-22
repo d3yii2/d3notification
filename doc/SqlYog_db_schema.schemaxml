@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemadesigner version="6.5">
 <source>
-<database charset="latin1" collation="latin1_swedish_ci">blankon_20191008</database>
+<database charset="latin1" collation="latin1_swedish_ci">coalmar_20191217</database>
 </source>
 <canvas zoom="100">
 <tables>
@@ -17,15 +17,18 @@
   `sys_model_id` tinyint(3) unsigned NOT NULL,
   `model_record_id` int(10) unsigned NOT NULL,
   `key` int(10) unsigned NOT NULL,
+  `type_id` smallint(5) unsigned DEFAULT NULL,
   `status_id` smallint(5) unsigned NOT NULL,
   `data` text,
   PRIMARY KEY (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   KEY `status_id` (`status_id`),
   KEY `sys_company_id` (`sys_company_id`),
+  KEY `d3n_notification_ibfk_type` (`type_id`),
   CONSTRAINT `d3n_notification_ibfk_1` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`),
-  CONSTRAINT `d3n_notification_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
+  CONSTRAINT `d3n_notification_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`),
+  CONSTRAINT `d3n_notification_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2331 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="sys_models" view="colnames">
 <left>575</left>
@@ -53,7 +56,7 @@
   KEY `id` (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   CONSTRAINT `d3n_status_ibfk_1` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3n_status_history" view="colnames">
 <left>570</left>
@@ -71,7 +74,22 @@
   KEY `status_id` (`status_id`),
   CONSTRAINT `d3n_status_history_ibfk_1` FOREIGN KEY (`notification_id`) REFERENCES `d3n_notification` (`id`),
   CONSTRAINT `d3n_status_history_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=666 DEFAULT CHARSET=latin1</sql_create_table>
+</table>
+<table name="d3n_type" view="colnames">
+<left>234</left>
+<top>457</top>
+<width>116</width>
+<height>131</height>
+<sql_create_table>CREATE TABLE `d3n_type` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `sys_model_id` tinyint(3) unsigned NOT NULL,
+  `type_id` tinyint(3) unsigned NOT NULL,
+  `label` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  KEY `id` (`id`),
+  KEY `sys_model_id` (`sys_model_id`),
+  CONSTRAINT `d3n_type_ibfk_sys_model` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 </tables>
 </canvas>

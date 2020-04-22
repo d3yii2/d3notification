@@ -3,30 +3,31 @@
 namespace d3yii2\d3notification\dictionaries;
 
 use d3yii2\d3notification\interfaces\Notification;
+use d3yii2\d3notification\models\D3nType;
 use Yii;
-use d3yii2\d3notification\models\D3nStatus;
 use yii\helpers\ArrayHelper;
 use d3system\exceptions\D3ActiveRecordException;
 
-class D3nStatusDictionary{
+class D3nTypeDictionary{
 
-    private const CACHE_KEY_LIST = 'D3nStatusDictionaryList';
-    private const CACHE_KEY_NOTIFICATION_LIST = 'D3nStatusDictionaryNotificationList';
+    private const CACHE_KEY_LIST = 'D3nTypeDictionaryList';
+    private const CACHE_KEY_NOTIFICATION_LIST = 'D3nTypeDictionaryNotificationList';
 
-    public static function getIdByNotificationStatus(
+    public static function getIdByNotificationType(
         int $sysModelId,
         Notification $notification
     ): int
     {
-        $statusId = $notification->getStatusId();
-        $key = $sysModelId . '-' . $statusId;
+
+        $typeId = $notification->getTypeId();
+        $key = $sysModelId . '-' . $typeId;
         if($id = self::getListByNotification()[$key]??0){
             return $id;
         }
-        $model = new D3nStatus();
+        $model = new D3nType();
         $model->sys_model_id = $sysModelId;
-        $model->status_id = $statusId;
-        $model->label = $notification->getNotificationStatusList()[$statusId]??'-';
+        $model->type_id = $typeId;
+        $model->label = $notification->getNotificationTypeList()[$typeId]??'-';
         if(!$model->save()){
             throw new D3ActiveRecordException($model);
         }
@@ -40,7 +41,7 @@ class D3nStatusDictionary{
             self::CACHE_KEY_NOTIFICATION_LIST,
             static function () {
                 return ArrayHelper::map(
-                    D3nStatus::find()
+                    D3nType::find()
                     ->select([
                         'id' => 'id',
                         'name' => 'label',
@@ -65,9 +66,9 @@ class D3nStatusDictionary{
             self::CACHE_KEY_LIST,
             static function () {
                 return ArrayHelper::map(
-                    D3nStatus::find()
+                    D3nType::find()
                     ->select([
-                        'id' => 'CONCAT(sys_model_id,\'-\',status_id)',
+                        'id' => 'CONCAT(sys_model_id,\'-\',type_id)',
                         'name' => 'id',
                         //'name' => 'CONCAT(code,\' \',name)'
                     ])

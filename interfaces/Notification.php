@@ -6,11 +6,6 @@ namespace d3yii2\d3notification\interfaces;
 
 interface Notification
 {
-    /**
-     * return actual status
-     * @return int
-     */
-    public function getNotificationStatus() : int;
 
     /**
      * get active record primary key value
@@ -25,20 +20,21 @@ interface Notification
     public function getNotificationKey() : int;
 
     /**
-     * get status
-     * @return int
-     */
-    public function getNotificationStatusId() : int;
-
-    /**
      * get notification data
      * @return array
      */
     public function getNotificationData() : array;
 
     /**
-     * actual status label
-     * @return string
+     * @return array
      */
-    public function getNotificationStatusLabel() : string;
+    public function getNotificationStatusList(): array;
+
+    /**
+     * @return array
+     */
+    public function getNotificationTypeList(): array;
+
+    public function getStatusId(): int;
+    public function getTypeId(): int;
 }
