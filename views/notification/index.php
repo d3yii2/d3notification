@@ -58,7 +58,7 @@ $this->setPageIcon('info');
             'columns' => [
                 [
                     'class' => ThDateColumn::class,
-                    'attribute' => 'time',
+                    'attribute' => 'time_local',
                     'header' => Yii::t('d3notification','Time'),
                 ],
                 [

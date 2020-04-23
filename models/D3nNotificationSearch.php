@@ -10,8 +10,8 @@ use eaBlankonThema\widget\ThRmGridView;
 
 
 /**
-* D3nNotificationSearch represents the model behind the search form about `d3yii2\d3notification\models\D3nNotification`.
-*/
+ * D3nNotificationSearch represents the model behind the search form about `d3yii2\d3notification\models\D3nNotification`.
+ */
 class D3nNotificationSearch extends D3nNotification
 {
 
@@ -22,24 +22,19 @@ class D3nNotificationSearch extends D3nNotification
 
 
     /**
-    * @inheritdoc
-    */
+     * @inheritdoc
+     */
     public function rules(): array
-{
-    return [
-        [['id', 'sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'type_id', 'status_id'], 'integer'],
-        [['time', 'data','time_local'], 'safe'],
-    ];
-    }
-
-    public function attributeLabels()
     {
-         return array_merge(parent::attributeLabels(),[]);
+        return [
+            [['id', 'sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'type_id', 'status_id'], 'integer'],
+            [['time', 'data', 'time_local'], 'safe'],
+        ];
     }
 
     /**
-    * @inheritdoc
-    */
+     * @inheritdoc
+     */
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
@@ -47,10 +42,10 @@ class D3nNotificationSearch extends D3nNotification
     }
 
     /**
-    * Creates data provider instance with search query applied
-    *
-    * @return ActiveDataProvider
-    */
+     * Creates data provider instance with search query applied
+     *
+     * @return ActiveDataProvider
+     */
     public function search(): ActiveDataProvider
     {
         $query = self::find();
