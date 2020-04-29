@@ -7,6 +7,8 @@ use d3yii2\d3notification\interfaces\Notification;
 use eaBlankonThema\widget\ThAlertList;
 use d3system\yii2\web\D3SystemView;
 use eaBlankonThema\widget\ThButtonDropDown;
+use eaBlankonThema\widget\ThExternalLink;
+use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
 use yii\widgets\Pjax;
@@ -60,10 +62,8 @@ $this->addPageButtons(ThButtonDropDown::widget([
 
 
 $this->beginBlock('d3yii2\d3notification\models\D3nNotification');
-?>
 
-
-<?= DetailView::widget([
+echo DetailView::widget([
     'model' => $model,
     'attributes' => [
         [
@@ -93,11 +93,32 @@ $this->beginBlock('d3yii2\d3notification\models\D3nNotification');
         [
             'attribute' => 'key',
         ],
-        [
-            'attribute' => 'data',
-        ],
     ],
-]) ?>
+]);
+$attributes = [];
+foreach(Json::decode($model->data) as $name => $value){
+    $attributes[] = [
+            'label' => $name,
+        'value' => $value
+    ];
+}
+/** @var Notification $notificationModel */
+$notificationModel = $model->getNotificationModel();
+foreach($notificationModel->getLinkList() as $link){
+    $attributes[] = [
+       'label' => $link['label'],
+        'value' => ThExternalLink::widget([
+            'url' => $link['url'],
+            'text' => $link['value']
+        ])
+    ];
+}
+echo DetailView::widget([
+    'model' => $model,
+    'attributes' => $attributes
+]);
+
+?>
 
 
 <hr/>
@@ -154,7 +175,6 @@ $this->beginBlock('d3yii2\d3notification\models\D3nNotification');
                                 ]
                             ],
                             'inputType' => Editable::INPUT_TEXT,
-                            'hAlign' => 'right',
 
                         ]
                     ],
@@ -184,8 +204,6 @@ $this->beginBlock('d3yii2\d3notification\models\D3nNotification');
                                 ]
                             ],
                             'inputType' => Editable::INPUT_TEXT,
-                            'hAlign' => 'right',
-
                         ]
                     ],
 

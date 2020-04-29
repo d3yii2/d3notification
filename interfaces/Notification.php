@@ -37,4 +37,10 @@ interface Notification
 
     public function getStatusId(): int;
     public function getTypeId(): int;
+
+    /**
+     *
+     * @return array ['label1' = [''url1],'label12 = [''url3],]
+     */
+    public function getLinkList(): array;
 }
