@@ -26,6 +26,12 @@ interface Notification
     public function getNotificationData() : array;
 
     /**
+     * get notification data
+     * @param array $data
+     */
+    public function loadNotificationData(array $data): void;
+
+    /**
      * @return array
      */
     public function getNotificationStatusList(): array;
