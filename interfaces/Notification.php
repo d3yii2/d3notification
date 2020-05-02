@@ -45,21 +45,12 @@ interface Notification
      */
     public function getNotificationTypeList(): array;
 
-    /**
-     * Actual status
-     * @return int
-     */
-    public function getStatusId(): int;
-
-    /**
-     * Get type
-     * @return int
-     */
-    public function getTypeId(): int;
+    public function getNotificationStatusId(): int;
+    public function getNotificationTypeId(): int;
 
     /**
      *
      * @return array ['label1' = [''url1],'label12 = [''url3],]
      */
-    public function getLinkList(): array;
+    public function getNotificationLinkList(): array;
 }

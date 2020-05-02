@@ -111,7 +111,7 @@ class NotificationLogic extends BaseObject
             'sys_model_id' => $idByClassName,
             'model_record_id' => $notificationModel->getNotificationRecordId(),
             'key' => $notificationModel->getNotificationKey(),
-            'type_id' => $notificationModel->getTypeId()
+            'type_id' => $notificationModel->getNotificationTypeId()
         ]);
     }
 
