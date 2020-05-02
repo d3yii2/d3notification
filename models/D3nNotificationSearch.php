@@ -7,6 +7,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use eaBlankonThema\widget\ThRmGridView;
+use yii\db\Exception;
 
 
 /**
@@ -45,20 +46,57 @@ class D3nNotificationSearch extends D3nNotification
      * Creates data provider instance with search query applied
      *
      * @return ActiveDataProvider
+     * @throws Exception
      */
     public function search(): ActiveDataProvider
     {
-        $query = self::find();
         $this->load(ThRmGridView::getMergedFilterStateParams());
 
         if (!$this->validate()) {
             return new ActiveDataProvider([
-                'query' => $query,
+                'query' => self::find(),
             ]);
         }
 
+        return new ActiveDataProvider([
+            'query' => $this->getQuery(),
+            //'sort' => ['defaultOrder' => ['????' => SORT_ASC]]
+            'pagination' => [
+                'params' => ThRmGridView::getMergedFilterStateParams(),
+            ],
+            'sort' => [
+                'params' => ThRmGridView::getMergedFilterStateParams(),
+            ],
+        ]);
+    }
 
-        $query
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param int $sysModelId
+     * @param int $modelRecordId
+     * @return ActiveDataProvider
+     * @throws Exception
+     */
+    public function searchForRecord(int $sysModelId, int $modelRecordId): ActiveDataProvider
+    {
+        $this->sys_model_id = $sysModelId;
+        $this->model_record_id = $modelRecordId;
+
+
+        return new ActiveDataProvider([
+            'query' => $this->getQuery(),
+            'pagination' => false,
+        ]);
+    }
+
+    /**
+     * @return D3nNotificationQuery|\yii\db\ActiveQuery
+     * @throws Exception
+     */
+    public function getQuery()
+    {
+        $query = self::find()
             ->select([
                 'd3n_notification.*'
             ])
@@ -73,15 +111,6 @@ class D3nNotificationSearch extends D3nNotification
             ])
             ->andFilterWhere(['like', 'd3n_notification.data', $this->data])
             ->andFilterWhereDateRange('d3n_notification.time', $this->time);
-        return new ActiveDataProvider([
-            'query' => $query,
-            //'sort' => ['defaultOrder' => ['????' => SORT_ASC]]
-            'pagination' => [
-                'params' => ThRmGridView::getMergedFilterStateParams(),
-            ],
-            'sort' => [
-                'params' => ThRmGridView::getMergedFilterStateParams(),
-            ],
-        ]);
+        return $query;
     }
 }

@@ -18,7 +18,7 @@ class D3nStatusDictionary{
         Notification $notification
     ): int
     {
-        $statusId = $notification->getStatusId();
+        $statusId = $notification->getNotificationStatusId();
         $key = $sysModelId . '-' . $statusId;
         if($id = self::getListByNotification()[$key]??0){
             return $id;

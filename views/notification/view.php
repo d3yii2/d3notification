@@ -104,9 +104,10 @@ foreach(Json::decode($model->data) as $name => $value){
 }
 /** @var Notification $notificationModel */
 $notificationModel = $model->getNotificationModel();
-foreach($notificationModel->getLinkList() as $link){
+foreach($notificationModel->getNotificationLinkList() as $link){
     $attributes[] = [
-       'label' => $link['label'],
+        'label' => $link['label'],
+        'format' => 'raw',
         'value' => ThExternalLink::widget([
             'url' => $link['url'],
             'text' => $link['value']

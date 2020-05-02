@@ -19,7 +19,7 @@ class D3nTypeDictionary{
     ): int
     {
 
-        $typeId = $notification->getTypeId();
+        $typeId = $notification->getNotificationTypeId();
         $key = $sysModelId . '-' . $typeId;
         if($id = self::getListByNotification()[$key]??0){
             return $id;
