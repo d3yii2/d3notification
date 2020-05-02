@@ -11,37 +11,50 @@ interface Notification
      * get active record primary key value
      * @return int
      */
-    public function getNotificationRecordId() : int;
+    public function getNotificationRecordId(): int;
 
     /**
      * get additional key
      * @return int
      */
-    public function getNotificationKey() : int;
+    public function getNotificationKey(): int;
 
     /**
-     * get notification data
-     * @return array
-     */
-    public function getNotificationData() : array;
-
-    /**
-     * get notification data
+     * load notification data
      * @param array $data
      */
     public function loadNotificationData(array $data): void;
 
     /**
+     * get notification data
      * @return array
+     */
+    public function getNotificationData(): array;
+
+    /**
+     * Return status list
+     *
+     * @return string[]
      */
     public function getNotificationStatusList(): array;
 
     /**
-     * @return array
+     * Return type list
+     *
+     * @return string[]
      */
     public function getNotificationTypeList(): array;
 
+    /**
+     * Actual status
+     * @return int
+     */
     public function getStatusId(): int;
+
+    /**
+     * Get type
+     * @return int
+     */
     public function getTypeId(): int;
 
     /**
