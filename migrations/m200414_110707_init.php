@@ -12,6 +12,7 @@ class m200414_110707_init  extends Migration {
               `sys_model_id` tinyint(3) unsigned NOT NULL,
               `status_id` tinyint(3) unsigned NOT NULL,
               `label` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+              PRIMARY KEY (`id`),
               KEY `id` (`id`),
               KEY `sys_model_id` (`sys_model_id`),
               CONSTRAINT `d3n_status_ibfk_1` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
@@ -24,6 +25,7 @@ class m200414_110707_init  extends Migration {
               `sys_model_id` tinyint(3) unsigned NOT NULL,
               `type_id` tinyint(3) unsigned NOT NULL,
               `label` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+              PRIMARY KEY (`id`),
               KEY `id` (`id`),
               KEY `sys_model_id` (`sys_model_id`),
               CONSTRAINT `d3n_type_ibfk_sys_model` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
