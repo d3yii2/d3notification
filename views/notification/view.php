@@ -1,5 +1,7 @@
 <?php
 
+use d3yii2\d3notification\models\D3nStatusHistory;
+use eaBlankonThema\widget\ThDataListColumn;
 use d3system\dictionaries\SysModelsDictionary;
 use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
 use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
@@ -8,17 +10,18 @@ use eaBlankonThema\widget\ThAlertList;
 use d3system\yii2\web\D3SystemView;
 use eaBlankonThema\widget\ThButtonDropDown;
 use eaBlankonThema\widget\ThExternalLink;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Json;
-use yii\helpers\Url;
 use yii\widgets\DetailView;
-use yii\widgets\Pjax;
-use kartik\editable\Editable;
 use kartik\grid\GridView;
 use eaBlankonThema\widget\ThButton;
 use eaBlankonThema\assetbundles\layout\LayoutAsset;
 use eaBlankonThema\widget\ThReturnButton;
+use yii2d3\d3persons\models\User;
+Use eaBlankonThema\assetbundles\widgets\ThGridViewAsset;
 
 LayoutAsset::register($this);
+ThGridViewAsset::register($this);
 
 
 /**
@@ -149,81 +152,46 @@ echo DetailView::widget([
         <div class="clearfix"></div>
     </div>
     <div class="panel-body no-padding">
-        <?php Pjax::begin(['id' => 'pjax-D3nStatusHistories', 'enableReplaceState' => false, 'linkSelector' => '#pjax-D3nStatusHistories ul.pagination a, th a', 'clientOptions' => ['pjax:success' => 'function(){alert("yo")}']]) ?>
         <div class="table-responsive">
             <?php
             echo GridView::widget([
-                'layout' => '{items}{pager}',
-                'dataProvider' => new \yii\data\ActiveDataProvider(['query' => $model->getD3nStatusHistories(), 'pagination' => ['pageSize' => 20, 'pageParam' => 'page-d3nstatushistories']]),
+                'layout' => '{items}',
+                'dataProvider' => new ActiveDataProvider([
+                    'query' => $model->getD3nStatusHistories(),
+                    'pagination' => false
+                ]),
                 'export' => false,
                 'tableOptions' => [
                     'class' => 'table table-striped table-success'
                 ],
-
-                //    'pager'        => [
-                //        'class'          => yii\widgets\LinkPager::class,
-                //        'firstPageLabel' => Yii::t('crud', 'First'),
-                //        'lastPageLabel'  => Yii::t('crud', 'Last')
-                //    ],
                 'columns' => [
                     [
-                        'class' => '\kartik\grid\EditableColumn',
+                        'class' => ThDataListColumn::class,
+                        'header' => 'Status',
                         'attribute' => 'status_id',
-                        'editableOptions' => [
-                            'formOptions' => [
-                                'action' => [
-                                    'd3n-status-history/editable-column-update'
-                                ]
-                            ],
-                            'inputType' => Editable::INPUT_TEXT,
-
-                        ]
+                        'list' => D3nStatusDictionary::getList()
                     ],
 
                     [
-                        'class' => '\kartik\grid\EditableColumn',
                         'attribute' => 'time',
-                        'editableOptions' => [
-                            'formOptions' => [
-                                'action' => [
-                                    'd3n-status-history/editable-column-update'
-                                ]
-                            ],
-                            'inputType' => Editable::INPUT_TEXT,
-
-
-                        ]
                     ],
 
                     [
-                        'class' => '\kartik\grid\EditableColumn',
                         'attribute' => 'user_id',
-                        'editableOptions' => [
-                            'formOptions' => [
-                                'action' => [
-                                    'd3n-status-history/editable-column-update'
-                                ]
-                            ],
-                            'inputType' => Editable::INPUT_TEXT,
-                        ]
+                        'header' => 'User',
+                        'value' => static function(D3nStatusHistory $model){
+                            if(!$user = User::findOne($model->user_id)){
+                                return $model->user_id;
+                            }
+                            return $user->username;
+                        }
+
                     ],
 
-                    [
-                        'class' => kartik\grid\ActionColumn::class,
-                        'template' => '{view} {update} {delete}',
-                        'urlCreator' => function ($action, $model, $key, $index) {
-                            $params = is_array($key) ? $key : ['id' => (string)$key];
-                            $params[0] = 'd3n-status-history/' . $action;
-                            $params['D3nStatusHistory'] = ['notification_id' => $model->primaryKey()[0]];
-                            return Url::toRoute($params);
-                        },
-                    ]
                 ]
             ]);
             ?>
         </div>
-        <?php Pjax::end() ?>
-
     </div>
 </div>
 <?php

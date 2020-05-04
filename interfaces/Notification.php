@@ -4,6 +4,8 @@
 namespace d3yii2\d3notification\interfaces;
 
 
+use d3yii2\d3notification\models\D3nNotification;
+
 interface Notification
 {
 
@@ -21,9 +23,9 @@ interface Notification
 
     /**
      * load notification data
-     * @param array $data
+     * @param D3nNotification $notification
      */
-    public function loadNotificationData(array $data): void;
+    public function loadNotificationData(D3nNotification $notification): void;
 
     /**
      * get notification data

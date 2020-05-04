@@ -36,7 +36,8 @@ class D3nNotification extends BaseD3nNotification
         if(!$this->model = $className::findOne($this->model_record_id)){
             throw new Exception('Can not find ' . $className . ' record ' . $this->model_record_id);
         }
-        $this->model->loadNotificationData(Json::decode($this->data));
+        $this->model->loadNotificationData($this);
+
         return $this->model;
 
     }
