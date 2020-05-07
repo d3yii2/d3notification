@@ -4,13 +4,13 @@ namespace d3yii2\d3notification\logic;
 
 
 
+use d3system\dictionaries\SysModelsDictionary;
 use d3system\exceptions\D3ActiveRecordException;
 use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
 use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
 use d3yii2\d3notification\interfaces\Notification;
 use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nStatusHistory;
-use Yii;
 use yii\base\BaseObject;
 use yii\helpers\Json;
 
@@ -41,7 +41,7 @@ class NotificationLogic extends BaseObject
      */
     public function register(Notification $notificationModel): void
     {
-        $idByClassName = Yii::$app->sysModel->getIdByClassName(get_class($notificationModel));
+        $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
         if($this->getOneNotification($idByClassName, $notificationModel)){
             return;
         }
@@ -86,7 +86,7 @@ class NotificationLogic extends BaseObject
     public function changeStatus(Notification $notificationModel): void
    {
 
-        $idByClassName = Yii::$app->sysModel->getIdByClassName(get_class($notificationModel));
+        $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
         if(!$model = $this->getOneNotification($idByClassName, $notificationModel)){
             $this->register($notificationModel);
             return;

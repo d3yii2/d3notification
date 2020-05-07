@@ -76,7 +76,7 @@ echo DetailView::widget([
         [
             'attribute' => 'sys_model_id',
             'label' => Yii::t('d3notification', 'Table'),
-            'value' => SysModelsDictionary::getList()[$model->sys_model_id] ?? '???'
+            'value' => SysModelsDictionary::getLabelList()[$model->sys_model_id] ?? '???'
         ],
         [
             'attribute' => 'type_id',

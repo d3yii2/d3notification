@@ -65,7 +65,7 @@ $this->setPageIcon('info');
                     'class' => ThDataListColumn::class,
                     'attribute' => 'sys_model_id',
                     'header' => Yii::t('d3notification','Table'),
-                    'list' => SysModelsDictionary::getList()
+                    'list' => SysModelsDictionary::getLabelList()
                 ],
                 [
                     'attribute' => 'type_id',
