@@ -34,6 +34,14 @@ class D3nStatusDictionary{
 
     }
 
+    public static function getIdByStatusById(
+        int $sysModelId,
+        int $statusId
+    ): int
+    {
+        return self::getListByNotification()[$sysModelId . '-' . $statusId];
+    }
+
     public static function getList(): array
     {
         return Yii::$app->cache->getOrSet(
