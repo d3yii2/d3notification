@@ -42,7 +42,7 @@ class NotificationLogic extends BaseObject
     public function register(Notification $notificationModel): void
     {
         $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
-        if($this->getOneNotification($notificationModel)){
+        if($this->getNotifications($notificationModel)){
             return;
         }
 
@@ -86,32 +86,35 @@ class NotificationLogic extends BaseObject
     public function changeStatus(Notification $notificationModel): void
    {
 
-        if(!$model = $this->getOneNotification($notificationModel)){
+        if(!$modelList = $this->getNotifications($notificationModel)){
             $this->register($notificationModel);
             return;
         }
-        $model->status_id = D3nStatusDictionary::getIdByNotificationStatus($model->sys_model_id,$notificationModel);
-        if(!$model->save()){
-            throw new D3ActiveRecordException($model);
-        }
+        foreach($modelList as $model) {
+            $model->status_id = D3nStatusDictionary::getIdByNotificationStatus($model->sys_model_id, $notificationModel);
+            if (!$model->save()) {
+                throw new D3ActiveRecordException($model);
+            }
 
-        $this->saveStatusHistory($model);
+            $this->saveStatusHistory($model);
+        }
     }
 
     /**
      * @param Notification $notificationModel
-     * @return D3nNotification|null
+     * @return D3nNotification[]
      * @throws D3ActiveRecordException
      */
-    public function getOneNotification(Notification $notificationModel): ?D3nNotification
+    public function getNotifications(Notification $notificationModel): array
     {
         $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
-        return D3nNotification::findOne([
+        return D3nNotification::findAll([
             'sys_company_id' => $this->sysCompanyId,
             'sys_model_id' => $idByClassName,
             'model_record_id' => $notificationModel->getNotificationRecordId(),
             'key' => $notificationModel->getNotificationKey(),
-            'type_id' => $notificationModel->getNotificationTypeId()
+            'type_id' => D3nTypeDictionary::getIdByNotificationType($idByClassName,$notificationModel),
+            'status_id' => $notificationModel->getNotificationStatusNewId()
         ]);
     }
 

@@ -61,12 +61,12 @@ $this->setPageIcon('info');
                     'attribute' => 'time_local',
                     'header' => Yii::t('d3notification','Time'),
                 ],
-                [
-                    'class' => ThDataListColumn::class,
-                    'attribute' => 'sys_model_id',
-                    'header' => Yii::t('d3notification','Table'),
-                    'list' => SysModelsDictionary::getLabelList()
-                ],
+//                [
+//                    'class' => ThDataListColumn::class,
+//                    'attribute' => 'sys_model_id',
+//                    'header' => Yii::t('d3notification','Table'),
+//                    'list' => SysModelsDictionary::getLabelList()
+//                ],
                 [
                     'attribute' => 'type_id',
                     'class' => ThDataListColumn::class,

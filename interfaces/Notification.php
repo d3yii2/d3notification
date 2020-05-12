@@ -46,8 +46,9 @@ interface Notification
      * @return string[]
      */
     public function getNotificationTypeList(): array;
-
+    public function getNotificationStatusNewId(): int;
     public function getNotificationStatusId(): int;
+    public function isNotificationNew(): int;
     public function getNotificationTypeId(): int;
 
     /**
