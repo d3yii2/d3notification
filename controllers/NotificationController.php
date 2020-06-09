@@ -5,6 +5,7 @@ namespace d3yii2\d3notification\controllers;
 use d3yii2\d3notification\accessRights\D3NotesFullUserRole;
 use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nNotificationSearch;
+use d3yii2\d3notification\Module;
 use ea\app\controllers\LayoutController;
 use thrieu\grid\ClearFilterStateBehavior;
 use Throwable;
@@ -22,6 +23,7 @@ class NotificationController extends LayoutController
     /**
      * @var boolean whether to enable CSRF validation for the actions in this controller.
      * CSRF validation is enabled only when both this property and [[Request::enableCsrfValidation]] are true.
+     * @var Module $module
      */
     public $enableCsrfValidation = false;
 
@@ -65,6 +67,7 @@ class NotificationController extends LayoutController
     public function actionIndex()
     {
         $searchModel = new D3nNotificationSearch;
+        $searchModel->status_id = $this->module->getActualStatusesIdList();
         $dataProvider = $searchModel->search();
 
         if (Yii::$app->request->isPjax) {

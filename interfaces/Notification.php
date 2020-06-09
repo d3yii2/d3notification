@@ -56,4 +56,10 @@ interface Notification
      * @return array ['label1' = [''url1],'label12 = [''url3],]
      */
     public function getNotificationLinkList(): array;
+
+    /**
+     * Return all active statuses. Use for default filter in notification grid
+     * @return int[]
+     */
+    public static function getNotificationActualStatuses(): array;
 }

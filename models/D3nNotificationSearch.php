@@ -28,8 +28,8 @@ class D3nNotificationSearch extends D3nNotification
     public function rules(): array
     {
         return [
-            [['id', 'sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'type_id', 'status_id'], 'integer'],
-            [['time', 'data', 'time_local'], 'safe'],
+            [['id', 'sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'type_id'], 'integer'],
+            [['time', 'data', 'time_local', 'status_id'], 'safe'],
         ];
     }
 
