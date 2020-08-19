@@ -14,7 +14,8 @@
     "homepage": "https://github.com/d3yii2/d3notification",
     "require": {
         "yiisoft/yii2": "*",
-        "d3yii2/d3system": "*"
+        "d3yii2/d3system": "*",
+        "unyii2/yii2-panel": "*"
     },
     "autoload": {
         "psr-4": {

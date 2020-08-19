@@ -4,7 +4,14 @@
 
 namespace d3yii2\d3notification\models\base;
 
+use d3system\dictionaries\SysModelsDictionary;
+use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
+use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
+use d3yii2\d3notification\models\D3nNotificationQuery;
+use d3yii2\d3notification\models\SysModels;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the base-model class for table "d3n_notification".
@@ -19,13 +26,13 @@ use Yii;
  * @property integer $status_id
  * @property string $data
  *
- * @property \d3yii2\d3notification\models\SysModels $sysModel
+ * @property SysModels $sysModel
  * @property \d3yii2\d3notification\models\D3nStatus $status
  * @property \d3yii2\d3notification\models\D3nType $type
  * @property \d3yii2\d3notification\models\D3nStatusHistory[] $d3nStatusHistories
  * @property string $aliasModel
  */
-abstract class D3nNotification extends \yii\db\ActiveRecord
+abstract class D3nNotification extends ActiveRecord
 {
 
 
@@ -62,9 +69,12 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
             [['sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'status_id'], 'required'],
             [['time'], 'safe'],
             [['data'], 'string'],
-            [['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']],
-            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
-            [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']]
+            //[['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']],
+            ['sys_model_id', 'in', 'range' => array_keys(SysModelsDictionary::getClassList())],
+            //[['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
+            ['status_id', 'in', 'range' => array_keys(D3nStatusDictionary::getList())],
+            //[['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']]
+            ['type_id', 'in', 'range' => array_keys(D3nTypeDictionary::getList())],
         ];
     }
 
@@ -87,15 +97,15 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSysModel()
     {
-        return $this->hasOne(\d3yii2\d3notification\models\SysModels::className(), ['id' => 'sys_model_id']);
+        return $this->hasOne(SysModels::className(), ['id' => 'sys_model_id']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getStatus()
     {
@@ -103,7 +113,7 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getType()
     {
@@ -111,7 +121,7 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getD3nStatusHistories()
     {
@@ -122,11 +132,11 @@ abstract class D3nNotification extends \yii\db\ActiveRecord
     
     /**
      * @inheritdoc
-     * @return \d3yii2\d3notification\models\D3nNotificationQuery the active query used by this AR class.
+     * @return D3nNotificationQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new \d3yii2\d3notification\models\D3nNotificationQuery(get_called_class());
+        return new D3nNotificationQuery(get_called_class());
     }
 
 

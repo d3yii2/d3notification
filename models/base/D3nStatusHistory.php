@@ -4,7 +4,11 @@
 
 namespace d3yii2\d3notification\models\base;
 
+use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
+use d3yii2\d3notification\models\D3nStatusHistoryQuery;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the base-model class for table "d3n_status_history".
@@ -19,7 +23,7 @@ use Yii;
  * @property \d3yii2\d3notification\models\D3nStatus $status
  * @property string $aliasModel
  */
-abstract class D3nStatusHistory extends \yii\db\ActiveRecord
+abstract class D3nStatusHistory extends ActiveRecord
 {
 
 
@@ -55,7 +59,8 @@ abstract class D3nStatusHistory extends \yii\db\ActiveRecord
             [['notification_id', 'status_id'], 'required'],
             [['time'], 'safe'],
             [['notification_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nNotification::className(), 'targetAttribute' => ['notification_id' => 'id']],
-            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']]
+            //[['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']]
+            ['status_id', 'in', 'range' => array_keys(D3nStatusDictionary::getList())],
         ];
     }
 
@@ -74,7 +79,7 @@ abstract class D3nStatusHistory extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getNotification()
     {
@@ -82,7 +87,7 @@ abstract class D3nStatusHistory extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getStatus()
     {
@@ -93,11 +98,11 @@ abstract class D3nStatusHistory extends \yii\db\ActiveRecord
     
     /**
      * @inheritdoc
-     * @return \d3yii2\d3notification\models\D3nStatusHistoryQuery the active query used by this AR class.
+     * @return D3nStatusHistoryQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new \d3yii2\d3notification\models\D3nStatusHistoryQuery(get_called_class());
+        return new D3nStatusHistoryQuery(get_called_class());
     }
 
 
