@@ -7,6 +7,7 @@ use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nNotificationSearch;
 use d3yii2\d3notification\Module;
 use ea\app\controllers\LayoutController;
+use Exception;
 use thrieu\grid\ClearFilterStateBehavior;
 use Throwable;
 use Yii;
@@ -46,8 +47,8 @@ class NotificationController extends LayoutController
                         'actions' => [
                             'index',
                             'view',
-                            'change-status'
-
+                            'change-status',
+                            'delete'
                         ],
                         'roles' => [
                             D3NotesFullUserRole::NAME
@@ -127,7 +128,7 @@ class NotificationController extends LayoutController
         try {
             $model->delete();
             $transaction->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $transaction->rollBack();
             FlashHelper::processException($e);
         }

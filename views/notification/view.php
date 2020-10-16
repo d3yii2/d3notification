@@ -101,7 +101,8 @@ echo DetailView::widget([
 $attributes = [];
 foreach(Json::decode($model->data) as $name => $value){
     $attributes[] = [
-            'label' => $name,
+        'label' => $name,
+        'format' => 'raw',
         'value' => $value
     ];
 }

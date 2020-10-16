@@ -1,6 +1,6 @@
 <?php
 
-use d3system\dictionaries\SysModelsDictionary;
+
 use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
 use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
 use eaBlankonThema\widget\ThDataListColumn;
@@ -81,7 +81,10 @@ $this->setPageIcon('info');
                 ],
 //                'model_record_id',
 //                'key',
-                'data:ntext',
+                [
+                    'attribute' => 'data',
+                    'format' => 'raw'
+                 ],
             ],
         ]);
 

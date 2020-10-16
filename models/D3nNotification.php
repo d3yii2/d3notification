@@ -41,4 +41,12 @@ class D3nNotification extends BaseD3nNotification
         return $this->model;
 
     }
+
+    public function delete()
+    {
+        foreach ($this->d3nStatusHistories as $history){
+            $history->delete();
+        }
+        return parent::delete();
+    }
 }
