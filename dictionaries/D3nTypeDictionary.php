@@ -35,6 +35,15 @@ class D3nTypeDictionary{
 
     }
 
+    public static function getIdByType(
+        int $sysModelId,
+        int $typeId
+    ): int
+    {
+        $key = $sysModelId . '-' . $typeId;
+        return self::getListByNotification()[$key]??false;
+    }
+
     public static function getList(): array
     {
         return Yii::$app->cache->getOrSet(

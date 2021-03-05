@@ -13,6 +13,7 @@ use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nStatusHistory;
 use yii\base\BaseObject;
 use yii\helpers\Json;
+use yii\helpers\VarDumper;
 
 
 class NotificationLogic extends BaseObject
@@ -132,6 +133,40 @@ class NotificationLogic extends BaseObject
             'sys_model_id' => $idByClassName,
             'status_id' => D3nStatusDictionary::getIdByStatusById($idByClassName,$statusId),
         ]);
+    }
+
+
+    /**
+     * get model record notifications
+     *
+     * @param string $modelClass
+     * @param int $modelRecordId
+     * @param int $statusId
+     * @param int|null $typeId
+     * @return D3nNotification[]
+     * @throws D3ActiveRecordException
+     */
+    public function getModelRecordNotificationList(
+        string $modelClass,
+        int $modelRecordId,
+        int $statusId,
+        int $typeId = null
+    ): array
+    {
+
+        $idByClassName = SysModelsDictionary::getIdByClassName($modelClass);
+        $condition = [
+            'sys_company_id' => $this->sysCompanyId,
+            'sys_model_id' => $idByClassName,
+            'model_record_id' => $modelRecordId,
+            'status_id' => $statusId,
+        ];
+        if($typeId){
+
+            $condition['type_id'] = D3nTypeDictionary::getIdByType($idByClassName,$typeId);
+        }
+
+        return D3nNotification::findAll($condition);
     }
 
 }
