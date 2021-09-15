@@ -15,10 +15,11 @@ use Yii;
  * @property string $label
  *
  * @property \d3yii2\d3notification\models\D3nNotification[] $d3nNotifications
+ * @property \d3yii2\d3notification\models\D3nTypeUser[] $d3nTypeUsers
  * @property \d3yii2\d3notification\models\SysModels $sysModel
  * @property string $aliasModel
  */
-abstract class D3nType extends \yii\db\ActiveRecord
+abstract class D3nType extends \d3system\models\D3ActiveRecord
 {
 
 
@@ -31,27 +32,15 @@ abstract class D3nType extends \yii\db\ActiveRecord
         return 'd3n_type';
     }
 
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            // 'attributeTypes' will be composed automatically according to `rules()`
-        ];
-    }
-
-
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
+            'required' => [['sys_model_id', 'type_id'], 'required'],
             'tinyint Unsigned' => [['sys_model_id','type_id'],'integer' ,'min' => 0 ,'max' => 255],
             'smallint Unsigned' => [['id'],'integer' ,'min' => 0 ,'max' => 65535],
-            [['sys_model_id', 'type_id'], 'required'],
             [['label'], 'string', 'max' => 50],
             [['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']]
         ];
@@ -75,7 +64,15 @@ abstract class D3nType extends \yii\db\ActiveRecord
      */
     public function getD3nNotifications()
     {
-        return $this->hasMany(\d3yii2\d3notification\models\D3nNotification::className(), ['type_id' => 'id']);
+        return $this->hasMany(\d3yii2\d3notification\models\D3nNotification::className(), ['type_id' => 'id'])->inverseOf('type');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getD3nTypeUsers()
+    {
+        return $this->hasMany(\d3yii2\d3notification\models\D3nTypeUser::className(), ['type_id' => 'id'])->inverseOf('type');
     }
 
     /**
@@ -83,9 +80,8 @@ abstract class D3nType extends \yii\db\ActiveRecord
      */
     public function getSysModel()
     {
-        return $this->hasOne(\d3yii2\d3notification\models\SysModels::className(), ['id' => 'sys_model_id']);
+        return $this->hasOne(\d3yii2\d3notification\models\SysModels::className(), ['id' => 'sys_model_id'])->inverseOf('d3nTypes');
     }
-
 
 
 

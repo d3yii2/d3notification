@@ -6,7 +6,7 @@ use d3yii2\d3notification\accessRights\D3NotesFullUserRole;
 use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nNotificationSearch;
 use d3yii2\d3notification\Module;
-use ea\app\controllers\LayoutController;
+use aluksne\app\controllers\LayoutController;
 use Exception;
 use thrieu\grid\ClearFilterStateBehavior;
 use Throwable;

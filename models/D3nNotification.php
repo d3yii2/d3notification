@@ -14,6 +14,7 @@ use yii\helpers\Json;
  */
 class D3nNotification extends BaseD3nNotification
 {
+    public $user;
 
     /** @var Notification */
     private $model;

@@ -15,6 +15,7 @@ use yii\db\Exception;
  */
 class D3nNotificationSearch extends D3nNotification
 {
+    public $userId;
 
     public function behaviors(): array
     {
@@ -28,7 +29,7 @@ class D3nNotificationSearch extends D3nNotification
     public function rules(): array
     {
         return [
-            [['id', 'sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'type_id'], 'integer'],
+            [['id', 'sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'type_id', 'userId'], 'integer'],
             [['time', 'data', 'time_local', 'status_id'], 'safe'],
         ];
     }

@@ -3,6 +3,8 @@
 
 use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
 use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
+use d3yii2\d3notification\models\D3nTypeUser;
+use eaBlankonThema\widget\ThColumnFilterSelect2;
 use eaBlankonThema\widget\ThDataListColumn;
 use eaBlankonThema\widget\ThDateColumn;
 use yii\helpers\Html;
@@ -12,6 +14,7 @@ use eaBlankonThema\widget\ThAlertList;
 use eaBlankonThema\assetbundles\CoreAsset;
 use thrieu\grid\FilterStateBehavior;
 use d3system\yii2\web\D3SystemView;
+use yii2d3\d3persons\dictionaries\UserDictionary;
 
 
 CoreAsset::register($this);
@@ -78,6 +81,13 @@ $this->setPageIcon('info');
                     'class' => ThDataListColumn::class,
                     'header' => Yii::t('d3notification','Status'),
                     'list' => D3nStatusDictionary::getList()
+                ],
+                [
+                    'attribute' => 'userId',
+                    'class' => ThDataListColumn::class,
+                    'header' => Yii::t('d3notification','User'),
+                    'list' => UserDictionary::getList(),
+                    'externalLinkUrl' => ['/d3persons/user/view', 'id' => '@id'],
                 ],
 //                'model_record_id',
 //                'key',

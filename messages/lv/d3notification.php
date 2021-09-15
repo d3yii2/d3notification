@@ -3,5 +3,7 @@ return [
     'Time' => 'Laiks',
     'Table' => 'Tabula',
     'Type' => 'Tips',
-    'Status' => 'Statuss'
+    'Status' => 'Statuss',
+    'Alert Type' => 'Paziņojuma veids',
+    'Count' => 'Skaits',
 ];
