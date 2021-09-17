@@ -6,4 +6,8 @@ return [
     'Status' => 'Statuss',
     'Alert Type' => 'Paziņojuma veids',
     'Count' => 'Skaits',
+    'New' => 'Jauns',
+    'Resolved' => 'Atrisināts',
+    'Ignored' => 'Ignorēts',
+    'Notifications' => 'Notifikācijas',
 ];

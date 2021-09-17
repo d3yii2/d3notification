@@ -46,6 +46,7 @@ class PanelController extends Controller
     public function actionMyNotifications(): string
     {
         $logic = new UserNotificationsLogic();
+        $logic->statusId = $this->module->statusId;
         return $this->render('my-notifications',[
             'data' => $logic->getMyNotificationsList()
         ]);

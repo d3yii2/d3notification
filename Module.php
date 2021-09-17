@@ -10,6 +10,7 @@ class Module extends D3Module
     public $controllerNamespace = 'd3yii2\d3notification\controllers';
 
     public $notificationModels = [];
+    public $statusId;
 
     /**
      * get all notification modules statuses list for using in grid ass active

@@ -4,14 +4,8 @@
 
 namespace d3yii2\d3notification\models\base;
 
-use d3system\dictionaries\SysModelsDictionary;
-use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
-use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
-use d3yii2\d3notification\models\D3nNotificationQuery;
-use d3yii2\d3notification\models\SysModels;
 use Yii;
-use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
+use d3system\behaviors\D3DateTimeBehavior;
 
 /**
  * This is the base-model class for table "d3n_notification".
@@ -22,17 +16,17 @@ use yii\db\ActiveRecord;
  * @property integer $sys_model_id
  * @property integer $model_record_id
  * @property integer $key
- * @property integer $type_id
  * @property integer $status_id
+ * @property integer $type_id
  * @property string $data
  *
- * @property SysModels $sysModel
- * @property \d3yii2\d3notification\models\D3nStatus $status
- * @property \d3yii2\d3notification\models\D3nType $type
  * @property \d3yii2\d3notification\models\D3nStatusHistory[] $d3nStatusHistories
+ * @property \d3yii2\d3notification\models\D3nStatus $status
+ * @property \d3yii2\d3notification\models\SysModels $sysModel
+ * @property \d3yii2\d3notification\models\D3nType $type
  * @property string $aliasModel
  */
-abstract class D3nNotification extends ActiveRecord
+abstract class D3nNotification extends \d3system\models\D3ActiveRecord
 {
 
 
@@ -45,17 +39,19 @@ abstract class D3nNotification extends ActiveRecord
         return 'd3n_notification';
     }
 
-
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
-        return [
-            // 'attributeTypes' will be composed automatically according to `rules()`
+        $behaviors = [
         ];
+        $behaviors = array_merge(
+            $behaviors,
+            D3DateTimeBehavior::getConfig(['time'])
+        );
+        return $behaviors;
     }
-
 
     /**
      * @inheritdoc
@@ -63,18 +59,16 @@ abstract class D3nNotification extends ActiveRecord
     public function rules()
     {
         return [
+            'required' => [['sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'status_id'], 'required'],
             'tinyint Unsigned' => [['sys_model_id'],'integer' ,'min' => 0 ,'max' => 255],
-            'smallint Unsigned' => [['sys_company_id','type_id','status_id'],'integer' ,'min' => 0 ,'max' => 65535],
+            'smallint Unsigned' => [['sys_company_id','status_id','type_id'],'integer' ,'min' => 0 ,'max' => 65535],
             'integer Unsigned' => [['id','model_record_id','key'],'integer' ,'min' => 0 ,'max' => 4294967295],
-            [['sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'status_id'], 'required'],
             [['time'], 'safe'],
             [['data'], 'string'],
-            //[['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']],
-            ['sys_model_id', 'in', 'range' => array_keys(SysModelsDictionary::getClassList())],
-            //[['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
-            ['status_id', 'in', 'range' => array_keys(D3nStatusDictionary::getList())],
-            //[['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']]
-            ['type_id', 'in', 'range' => array_keys(D3nTypeDictionary::getList())],
+            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
+            [['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']],
+            [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']],
+            'D3DateTimeBehavior' => [['time_local'],'safe']
         ];
     }
 
@@ -90,22 +84,22 @@ abstract class D3nNotification extends ActiveRecord
             'sys_model_id' => Yii::t('d3notification', 'Sys Model ID'),
             'model_record_id' => Yii::t('d3notification', 'Model Record ID'),
             'key' => Yii::t('d3notification', 'Key'),
-            'type_id' => Yii::t('d3notification', 'Type ID'),
             'status_id' => Yii::t('d3notification', 'Status ID'),
+            'type_id' => Yii::t('d3notification', 'Type ID'),
             'data' => Yii::t('d3notification', 'Data'),
         ];
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
-    public function getSysModel()
+    public function getD3nStatusHistories()
     {
-        return $this->hasOne(SysModels::className(), ['id' => 'sys_model_id']);
+        return $this->hasMany(\d3yii2\d3notification\models\D3nStatusHistory::className(), ['notification_id' => 'id']);
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getStatus()
     {
@@ -113,31 +107,30 @@ abstract class D3nNotification extends ActiveRecord
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSysModel()
+    {
+        return $this->hasOne(\d3yii2\d3notification\models\SysModels::className(), ['id' => 'sys_model_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
      */
     public function getType()
     {
         return $this->hasOne(\d3yii2\d3notification\models\D3nType::className(), ['id' => 'type_id']);
     }
 
-    /**
-     * @return ActiveQuery
-     */
-    public function getD3nStatusHistories()
-    {
-        return $this->hasMany(\d3yii2\d3notification\models\D3nStatusHistory::className(), ['notification_id' => 'id']);
-    }
-
 
     
     /**
      * @inheritdoc
-     * @return D3nNotificationQuery the active query used by this AR class.
+     * @return \d3yii2\d3notification\models\D3nNotificationQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new D3nNotificationQuery(get_called_class());
+        return new \d3yii2\d3notification\models\D3nNotificationQuery(get_called_class());
     }
-
 
 }
