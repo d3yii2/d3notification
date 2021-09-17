@@ -47,15 +47,14 @@ class UserNotificationsLogic
             ]);
         
         if ($this->statusId) {
-            //$sql->andWhere(['in', 'd3n_notification.status_id', $this->statusId]);
+            $sql->andWhere(['in', 'd3n_notification.status_id', $this->statusId]);
         }
         
         if ($this->typeId) {
-           // $sql->andWhere(['d3n_type_user.type_id' => $this->typeId]);
+            $sql->andWhere(['d3n_type_user.type_id' => $this->typeId]);
         }
         
         $data = $sql->asArray()->all();
-        $raw = $sql->getRawSql();
         return $data;
     }
 }
