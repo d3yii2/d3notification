@@ -19,6 +19,7 @@ use d3system\behaviors\D3DateTimeBehavior;
  * @property integer $status_id
  * @property integer $type_id
  * @property string $data
+ * @property string $notes
  *
  * @property \d3yii2\d3notification\models\D3nStatusHistory[] $d3nStatusHistories
  * @property \d3yii2\d3notification\models\D3nStatus $status
@@ -64,7 +65,7 @@ abstract class D3nNotification extends \d3system\models\D3ActiveRecord
             'smallint Unsigned' => [['sys_company_id','status_id','type_id'],'integer' ,'min' => 0 ,'max' => 65535],
             'integer Unsigned' => [['id','model_record_id','key'],'integer' ,'min' => 0 ,'max' => 4294967295],
             [['time'], 'safe'],
-            [['data'], 'string'],
+            [['data', 'notes'], 'string'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
             [['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']],
@@ -87,6 +88,7 @@ abstract class D3nNotification extends \d3system\models\D3ActiveRecord
             'status_id' => Yii::t('d3notification', 'Status ID'),
             'type_id' => Yii::t('d3notification', 'Type ID'),
             'data' => Yii::t('d3notification', 'Data'),
+            'notes' => Yii::t('d3notification', 'Notes'),
         ];
     }
 
