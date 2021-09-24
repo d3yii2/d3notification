@@ -3,7 +3,6 @@
 
 namespace d3yii2\d3notification\logic;
 
-
 use d3yii2\d3notification\models\D3nNotification;
 
 class DashboardLogic
@@ -25,6 +24,7 @@ class DashboardLogic
     /**
      * @param int[] $statusIdList
      * @return array
+     * @throws \yii\base\InvalidConfigException
      */
     public function getList(array $statusIdList): array
     {

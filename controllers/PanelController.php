@@ -8,6 +8,9 @@ use unyii2\yii2panel\Controller;
 use Yii;
 use yii\filters\AccessControl;
 
+/**
+ * @property \d3yii2\d3notification\Module $module
+ */
 class PanelController extends Controller
 {
 
@@ -35,21 +38,26 @@ class PanelController extends Controller
         ];
     }
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function actionDashboard(array $statusIdList): string
     {
         $logic = new DashboardLogic(Yii::$app->SysCmp->getActiveCompanyId());
-        return $this->render('dashboard',[
+        return $this->render('dashboard', [
             'data' => $logic->getList($statusIdList)
         ]);
     }
 
+    /**
+     * @throws \yii\base\InvalidConfigException
+     */
     public function actionMyNotifications(): string
     {
-        $logic = new UserNotificationsLogic();
+        $logic = new UserNotificationsLogic(Yii::$app->user->id);
         $logic->statusId = $this->module->statusId;
-        return $this->render('my-notifications',[
+        return $this->render('my-notifications', [
             'data' => $logic->getMyNotificationsList()
         ]);
     }
-
 }

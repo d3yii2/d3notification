@@ -2,11 +2,8 @@
 
 namespace d3yii2\d3notification\logic;
 
-use d3yii2\d3notification\models\D3nNotification;
-use d3yii2\d3notification\models\D3nType;
 use d3yii2\d3notification\models\D3nTypeUser;
 use Yii;
-use yii\helpers\ArrayHelper;
 
 class UserNotificationsLogic
 {
@@ -20,24 +17,21 @@ class UserNotificationsLogic
     
     /**
      * UserNotificationsLogic constructor.
-     * @param $sys_company_id
      */
-    public function __construct()
+    public function __construct(int $userId)
     {
-        $this->userId = Yii::$app->user->id;
+        $this->userId = $userId;
     }
-    
+
     /**
-     * @param int[] $statusIdList
      * @return array
+     * @throws \yii\base\InvalidConfigException
      */
     public function getMyNotificationsList(): array
     {
         $sql = D3nTypeUser::find()
             ->select([
                 'd3n_notification.*',
-             //   'd3n_status.label',
-             //   'd3n_notification.status_id',
             ])
             ->joinWith('type')
             ->joinWith('type.d3nNotifications.status')
@@ -54,7 +48,6 @@ class UserNotificationsLogic
             $sql->andWhere(['d3n_type_user.type_id' => $this->typeId]);
         }
         
-        $data = $sql->asArray()->all();
-        return $data;
+        return $sql->asArray()->all();
     }
 }

@@ -6,7 +6,7 @@ use d3yii2\d3notification\accessRights\D3NotesFullUserRole;
 use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nNotificationSearch;
 use d3yii2\d3notification\Module;
-use aluksne\app\controllers\LayoutController;
+use eaBlankonThema\yii2\web\LayoutController;
 use Exception;
 use thrieu\grid\ClearFilterStateBehavior;
 use Throwable;
@@ -63,9 +63,10 @@ class NotificationController extends LayoutController
 
     /**
      * Lists all D3nNotification models.
-     * @return mixed
+     * @return string
+     * @throws \yii\db\Exception
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new D3nNotificationSearch;
         $searchModel->status_id = $this->module->getActualStatusesIdList();
@@ -82,7 +83,6 @@ class NotificationController extends LayoutController
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
         ]);
-
     }
 
     /**
@@ -100,6 +100,9 @@ class NotificationController extends LayoutController
     }
 
 
+    /**
+     * @throws \yii\web\HttpException
+     */
     public function actionChangeStatus(int $id, int $status_id): Response
     {
 
@@ -120,7 +123,7 @@ class NotificationController extends LayoutController
      * @throws HttpException
      * @throws Throwable
      */
-    public function actionDelete(int $id)
+    public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
         $transaction = Yii::$app->getDb()->beginTransaction();
@@ -190,7 +193,6 @@ class NotificationController extends LayoutController
             }
         }
         return ['output' => '', 'message' => implode('<br>', $errors)];
-
     }
 
     /**

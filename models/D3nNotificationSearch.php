@@ -7,8 +7,8 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use eaBlankonThema\widget\ThRmGridView;
+use yii\db\ActiveQuery;
 use yii\db\Exception;
-
 
 /**
  * D3nNotificationSearch represents the model behind the search form about `d3yii2\d3notification\models\D3nNotification`.
@@ -16,12 +16,12 @@ use yii\db\Exception;
 class D3nNotificationSearch extends D3nNotification
 {
     public $userId;
+    public $userNamesList;
 
     public function behaviors(): array
     {
         return D3DateTimeBehavior::getConfig(['time']);
     }
-
 
     /**
      * @inheritdoc
@@ -30,7 +30,7 @@ class D3nNotificationSearch extends D3nNotification
     {
         return [
             [['id', 'sys_company_id', 'sys_model_id', 'model_record_id', 'key', 'type_id', 'userId'], 'integer'],
-            [['time', 'data', 'time_local', 'status_id'], 'safe'],
+            [['time', 'data', 'time_local', 'status_id', 'userId'], 'safe'],
         ];
     }
 
@@ -47,7 +47,7 @@ class D3nNotificationSearch extends D3nNotification
      * Creates data provider instance with search query applied
      *
      * @return ActiveDataProvider
-     * @throws Exception
+     * @throws Exception|\yii\base\InvalidConfigException
      */
     public function search(): ActiveDataProvider
     {
@@ -55,7 +55,7 @@ class D3nNotificationSearch extends D3nNotification
 
         if (!$this->validate()) {
             return new ActiveDataProvider([
-                'query' => self::find(),
+                'query' => self::find()->where('1=2'),
             ]);
         }
 
@@ -77,7 +77,7 @@ class D3nNotificationSearch extends D3nNotification
      * @param int $sysModelId
      * @param int $modelRecordId
      * @return ActiveDataProvider
-     * @throws Exception
+     * @throws Exception|\yii\base\InvalidConfigException
      */
     public function searchForRecord(int $sysModelId, int $modelRecordId): ActiveDataProvider
     {
@@ -92,15 +92,21 @@ class D3nNotificationSearch extends D3nNotification
     }
 
     /**
-     * @return D3nNotificationQuery|\yii\db\ActiveQuery
-     * @throws Exception
+     * @return \yii\db\ActiveQuery
+     * @throws Exception|\yii\base\InvalidConfigException
      */
-    public function getQuery()
+    public function getQuery(): ActiveQuery
     {
-        $query = self::find()
+        return self::find()
             ->select([
-                'd3n_notification.*'
+                'd3n_notification.*',
+                'userNamesList' => 'GROUP_CONCAT(DISTINCT user.username SEPARATOR \',\')'
             ])
+            ->leftJoin(
+                'd3n_type_user',
+                'd3n_type_user.type_id = d3n_notification.type_id'
+            )
+            ->leftJoin('user', 'user.id = d3n_type_user.user_id')
             ->andFilterWhere([
                 'd3n_notification.id' => $this->id,
                 'd3n_notification.sys_company_id' => Yii::$app->SysCmp->getActiveCompanyId(),
@@ -109,9 +115,10 @@ class D3nNotificationSearch extends D3nNotification
                 'd3n_notification.key' => $this->key,
                 'd3n_notification.type_id' => $this->type_id,
                 'd3n_notification.status_id' => $this->status_id,
+                'd3n_type_user.user_id' => $this->userId,
             ])
             ->andFilterWhere(['like', 'd3n_notification.data', $this->data])
-            ->andFilterWhereDateRange('d3n_notification.time', $this->time);
-        return $query;
+            ->andFilterWhereDateRange('d3n_notification.time', $this->time)
+            ->groupBy('d3n_notification.id');
     }
 }
