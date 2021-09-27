@@ -10,7 +10,6 @@ class Module extends D3Module
     public $controllerNamespace = 'd3yii2\d3notification\controllers';
 
     public $notificationModels = [];
-    public $statusId;
 
     /**
      * get all notification modules statuses list for using in grid ass active
@@ -19,9 +18,9 @@ class Module extends D3Module
     public function getActualStatusesIdList(): array
     {
         $list = [];
-        foreach($this->notificationModels as $notificationModel){
-            if(method_exists($notificationModel,'getNotificationActualStatuses')){
-                foreach($notificationModel::getNotificationActualStatuses() as $statusId){
+        foreach ($this->notificationModels as $notificationModel) {
+            if (method_exists($notificationModel, 'getNotificationActualStatuses')) {
+                foreach ($notificationModel::getNotificationActualStatuses() as $statusId) {
                     $list[] = $statusId;
                 }
             }
@@ -31,6 +30,6 @@ class Module extends D3Module
 
     public function getLabel(): string
     {
-        return Yii::t('d3notification','Notifications');
+        return Yii::t('d3notification', 'Notifications');
     }
 }

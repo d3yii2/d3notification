@@ -177,3 +177,33 @@ $notification->delivery = $delivery;
 $notification->deliveryStatus = $statusEndStation;
 $logic->register($notification);
 ```
+
+###Notification registration by  form
+To controlier add action
+
+```php 
+    public function actions()
+    {
+        return [
+            'notification-create' => [
+                'class' => CreateNotification::class,
+                'notificationModelClass' => MTaskNotification::class,
+                'typeId' => MTaskNotification::NOTIFICATION_TYPE_OTHER,
+                'backUrl' => ['view','id' => '@id'],
+                'notesList' => [
+                    'aaa1',
+                    'aaa2',
+                 ]
+            ]
+        ];
+    }    
+```
+
+### widget for model actions
+show all model record notifications
+```php 
+        echo ModelNotifications::widget([
+            'modelClass' => MTaskNotification::class,
+            'modelRecordId' => $model->id
+        ]);
+```

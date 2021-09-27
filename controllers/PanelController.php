@@ -13,6 +13,10 @@ use yii\filters\AccessControl;
  */
 class PanelController extends Controller
 {
+    /**
+     * @var mixed
+     */
+    public $statusIdList;
 
     /**
      * @inheritdoc
@@ -27,7 +31,7 @@ class PanelController extends Controller
                         'allow' => true,
                         'actions' => [
                             'dashboard',
-                            'my-notifications'
+                            'my-notifications',
                         ],
                         'roles' => [
                             D3NotesFullUserRole::NAME,
@@ -39,7 +43,7 @@ class PanelController extends Controller
     }
 
     /**
-     * @throws \yii\db\Exception
+     * @throws \yii\db\Exception|\yii\base\InvalidConfigException
      */
     public function actionDashboard(array $statusIdList): string
     {
@@ -52,10 +56,10 @@ class PanelController extends Controller
     /**
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionMyNotifications(): string
+    public function actionMyNotifications(array $statusIdList): string
     {
         $logic = new UserNotificationsLogic(Yii::$app->user->id);
-        $logic->statusId = $this->module->statusId;
+        $logic->statusId = $statusIdList;
         return $this->render('my-notifications', [
             'data' => $logic->getMyNotificationsList()
         ]);

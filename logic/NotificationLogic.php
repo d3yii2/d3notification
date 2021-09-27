@@ -2,8 +2,6 @@
 
 namespace d3yii2\d3notification\logic;
 
-
-
 use d3system\dictionaries\SysModelsDictionary;
 use d3system\exceptions\D3ActiveRecordException;
 use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
@@ -11,10 +9,9 @@ use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
 use d3yii2\d3notification\interfaces\Notification;
 use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nStatusHistory;
+use Yii;
 use yii\base\BaseObject;
 use yii\helpers\Json;
-use yii\helpers\VarDumper;
-
 
 class NotificationLogic extends BaseObject
 {
@@ -38,12 +35,13 @@ class NotificationLogic extends BaseObject
 
     /**
      * @param Notification $notificationModel
-     * @throws D3ActiveRecordException
+     * @param string|null $notes
+     * @throws \d3system\exceptions\D3ActiveRecordException
      */
-    public function register(Notification $notificationModel): void
+    public function register(Notification $notificationModel, string $notes = null): void
     {
         $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
-        if($this->getNotifications($notificationModel)){
+        if ($this->getNotifications($notificationModel)) {
             return;
         }
 
@@ -53,15 +51,21 @@ class NotificationLogic extends BaseObject
         $model->sys_model_id = $idByClassName;
         $model->model_record_id = $notificationModel->getNotificationRecordId();
         $model->key = $notificationModel->getNotificationKey();
-        $model->type_id = D3nTypeDictionary::getIdByNotificationType($model->sys_model_id,$notificationModel);
-        $model->status_id = D3nStatusDictionary::getIdByNotificationStatus($model->sys_model_id,$notificationModel);
-        $model->data = Json::encode($notificationModel->getNotificationData());
-        if(!$model->save()){
+        $model->type_id = D3nTypeDictionary::getIdByNotificationType($model->sys_model_id, $notificationModel);
+        $model->status_id = D3nStatusDictionary::getIdByNotificationStatus($model->sys_model_id, $notificationModel);
+        if ($notes) {
+            $model->notes = $notes;
+        }
+        $notificationData = $notificationModel->getNotificationData();
+        if (Yii::$app->has('user') && Yii::$app->user !== null) {
+            $notificationData['reportUserId'] = Yii::$app->user->id;
+        }
+        $model->data = Json::encode($notificationData);
+        if (!$model->save()) {
             throw new D3ActiveRecordException($model);
         }
 
         $this->saveStatusHistory($model);
-
     }
 
     /**
@@ -85,13 +89,13 @@ class NotificationLogic extends BaseObject
      * @throws D3ActiveRecordException
      */
     public function changeStatus(Notification $notificationModel): void
-   {
+    {
 
-        if(!$modelList = $this->getNotifications($notificationModel)){
+        if (!$modelList = $this->getNotifications($notificationModel)) {
             $this->register($notificationModel);
             return;
         }
-        foreach($modelList as $model) {
+        foreach ($modelList as $model) {
             $model->status_id = D3nStatusDictionary::getIdByNotificationStatus($model->sys_model_id, $notificationModel);
             if (!$model->save()) {
                 throw new D3ActiveRecordException($model);
@@ -114,7 +118,7 @@ class NotificationLogic extends BaseObject
             'sys_model_id' => $idByClassName,
             'model_record_id' => $notificationModel->getNotificationRecordId(),
             'key' => $notificationModel->getNotificationKey(),
-            'type_id' => D3nTypeDictionary::getIdByNotificationType($idByClassName,$notificationModel),
+            'type_id' => D3nTypeDictionary::getIdByNotificationType($idByClassName, $notificationModel),
             'status_id' => $notificationModel->getNotificationStatusNewId()
         ]);
     }
@@ -131,7 +135,7 @@ class NotificationLogic extends BaseObject
         return D3nNotification::findAll([
             'sys_company_id' => $this->sysCompanyId,
             'sys_model_id' => $idByClassName,
-            'status_id' => D3nStatusDictionary::getIdByStatusById($idByClassName,$statusId),
+            'status_id' => D3nStatusDictionary::getIdByStatusById($idByClassName, $statusId)
         ]);
     }
 
@@ -151,9 +155,7 @@ class NotificationLogic extends BaseObject
         int $modelRecordId,
         int $statusId,
         int $typeId = null
-    ): array
-    {
-
+    ): array {
         $idByClassName = SysModelsDictionary::getIdByClassName($modelClass);
         $condition = [
             'sys_company_id' => $this->sysCompanyId,
@@ -161,12 +163,10 @@ class NotificationLogic extends BaseObject
             'model_record_id' => $modelRecordId,
             'status_id' => $statusId,
         ];
-        if($typeId){
-
-            $condition['type_id'] = D3nTypeDictionary::getIdByType($idByClassName,$typeId);
+        if ($typeId) {
+            $condition['type_id'] = D3nTypeDictionary::getIdByType($idByClassName, $typeId);
         }
 
         return D3nNotification::findAll($condition);
     }
-
 }

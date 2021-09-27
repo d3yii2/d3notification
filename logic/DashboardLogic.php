@@ -14,7 +14,7 @@ class DashboardLogic
 
     /**
      * DashboardLogic constructor.
-     * @param $sys_company_id
+     * @param int $sys_company_id
      */
     public function __construct(int $sys_company_id)
     {

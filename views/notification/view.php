@@ -18,7 +18,7 @@ use eaBlankonThema\widget\ThButton;
 use eaBlankonThema\assetbundles\layout\LayoutAsset;
 use eaBlankonThema\widget\ThReturnButton;
 use yii2d3\d3persons\models\User;
-Use eaBlankonThema\assetbundles\widgets\ThGridViewAsset;
+use eaBlankonThema\assetbundles\widgets\ThGridViewAsset;
 
 LayoutAsset::register($this);
 ThGridViewAsset::register($this);
@@ -42,11 +42,11 @@ $notificationClass = SysModelsDictionary::getClassList()[$model->sys_model_id];
 $notificationModel = new $notificationClass();
 $dropDownItems = [];
 foreach ($notificationModel->getNotificationStatusList() as $statusId => $statusNem) {
-    if($statusId === $model->status_id){
+    if ($statusId === $model->status_id) {
         continue;
     }
     $notificationModel->statusId = $statusId;
-    $realStatusId = D3nStatusDictionary::getIdByNotificationStatus($model->sys_model_id,$notificationModel);
+    $realStatusId = D3nStatusDictionary::getIdByNotificationStatus($model->sys_model_id, $notificationModel);
     $dropDownItems[] = [
         'label' => $statusNem,
         'url' => [
@@ -89,7 +89,7 @@ echo DetailView::widget([
             'header' => Yii::t('d3notification', 'Status'),
             'value' => D3nStatusDictionary::getList()[$model->status_id] ?? '???'
         ],
-
+        'notes',
         [
             'attribute' => 'model_record_id',
         ],
@@ -99,7 +99,7 @@ echo DetailView::widget([
     ],
 ]);
 $attributes = [];
-foreach(Json::decode($model->data) as $name => $value){
+foreach (Json::decode($model->data) as $name => $value) {
     $attributes[] = [
         'label' => $name,
         'format' => 'raw',
@@ -108,7 +108,7 @@ foreach(Json::decode($model->data) as $name => $value){
 }
 /** @var Notification $notificationModel */
 $notificationModel = $model->getNotificationModel();
-foreach($notificationModel->getNotificationLinkList() as $link){
+foreach ($notificationModel->getNotificationLinkList() as $link) {
     $attributes[] = [
         'label' => $link['label'],
         'format' => 'raw',
@@ -180,8 +180,8 @@ echo DetailView::widget([
                     [
                         'attribute' => 'user_id',
                         'header' => 'User',
-                        'value' => static function(D3nStatusHistory $model){
-                            if(!$user = User::findOne($model->user_id)){
+                        'value' => static function (D3nStatusHistory $model) {
+                            if (!$user = User::findOne($model->user_id)) {
                                 return $model->user_id;
                             }
                             return $user->username;
