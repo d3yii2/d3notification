@@ -36,7 +36,8 @@ class ModelNotifications extends Widget
                     'tooltip' => Yii::t('manufacture', 'Add new notification'),
                     'link' => ['notification-create', 'id' => $this->modelRecordId],
                     'icon' => ThButton::ICON_PLUS,
-                    'type' => ThButton::TYPE_PRIMARY
+                    'type' => ThButton::TYPE_PRIMARY,
+                    'size' => ThButton::SIZE_XSMALL
                 ])
                 . Yii::t('d3notification', 'Notifications'),
             'columns' => [
