@@ -4,6 +4,7 @@ namespace d3yii2\d3notification\logic;
 
 use d3system\dictionaries\SysModelsDictionary;
 use d3system\exceptions\D3ActiveRecordException;
+use d3system\exceptions\D3UserAlertException;
 use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
 use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
 use d3yii2\d3notification\interfaces\Notification;
@@ -11,6 +12,7 @@ use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nStatusHistory;
 use Yii;
 use yii\base\BaseObject;
+use yii\base\Exception;
 use yii\helpers\Json;
 
 class NotificationLogic extends BaseObject
@@ -35,14 +37,18 @@ class NotificationLogic extends BaseObject
 
     /**
      * @param Notification $notificationModel
-     * @param string|null $notes
+     * @param string|null $otherName
      * @throws \d3system\exceptions\D3ActiveRecordException
+     * @throws \d3system\exceptions\D3UserAlertException
      */
-    public function register(Notification $notificationModel, string $notes = null): void
-    {
+    public function register(
+        Notification $notificationModel,
+        string $notes = null,
+        string $userNotes = null
+    ): void {
         $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
-        if ($this->getNotifications($notificationModel)) {
-            return;
+        if ($this->getNotifications($notificationModel, $notes)) {
+            throw new D3UserAlertException(Yii::t('d3notification', 'An alert of this type has already been added'));
         }
 
         $model = new D3nNotification();
@@ -65,20 +71,21 @@ class NotificationLogic extends BaseObject
             throw new D3ActiveRecordException($model);
         }
 
-        $this->saveStatusHistory($model);
+        $this->saveStatusHistory($model, $userNotes);
     }
 
     /**
      * @param D3nNotification $model
      * @throws D3ActiveRecordException
      */
-    private function saveStatusHistory(D3nNotification $model): void
+    private function saveStatusHistory(D3nNotification $model, string $notes = null): void
     {
         $statusHistory = new D3nStatusHistory();
         $statusHistory->notification_id = $model->id;
         $statusHistory->status_id = $model->status_id;
         $statusHistory->time = $model->time;
         $statusHistory->user_id = $this->userId;
+        $statusHistory->notes = $notes;
         if (!$statusHistory->save()) {
             throw new D3ActiveRecordException($statusHistory);
         }
@@ -110,7 +117,7 @@ class NotificationLogic extends BaseObject
      * @return D3nNotification[]
      * @throws D3ActiveRecordException
      */
-    public function getNotifications(Notification $notificationModel): array
+    public function getNotifications(Notification $notificationModel, string $notes = null): array
     {
         $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
         return D3nNotification::findAll([
@@ -119,7 +126,8 @@ class NotificationLogic extends BaseObject
             'model_record_id' => $notificationModel->getNotificationRecordId(),
             'key' => $notificationModel->getNotificationKey(),
             'type_id' => D3nTypeDictionary::getIdByNotificationType($idByClassName, $notificationModel),
-            'status_id' => $notificationModel->getNotificationStatusNewId()
+            'status_id' => $notificationModel->getNotificationStatusNewId(),
+            'notes' => $notes
         ]);
     }
 

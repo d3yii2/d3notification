@@ -47,11 +47,14 @@ $this->addPageButtons(ThReturnButton::widget(['backUrl' => ['view', 'id' => $mod
                         ->field($formModel, 'typeId')
                         ->dropDownList($formModel->typeListForDropdown())
                     ?>
-                    <?= $form->field($formModel, 'notes')
+                    <?= $form
+                        ->field($formModel, 'notes')
                         ->textarea([
                             'disabled' => true
-                        ])
-                    ?>
+                        ])?>
+                    <?= $form
+                        ->field($formModel, 'userNotes')
+                        ->textarea()?>
 
                     <div class="form-footer">
                         <div class="pull-right">

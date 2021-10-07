@@ -48,7 +48,7 @@ class CreateNotification extends Action
                 throw new Exception('Can not initiate transaction');
             }
             try {
-                $logic->register($notification, $formModel->notes);
+                $logic->register($notification, $formModel->notes, $formModel->userNotes);
                 $transaction->commit();
                 return $this->controller->redirect($this->createBackUrl($id));
             } catch (D3UserAlertException $e) {

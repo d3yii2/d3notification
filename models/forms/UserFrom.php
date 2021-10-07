@@ -14,6 +14,9 @@ class UserFrom extends Model
      */
     public $notes;
 
+    /** @var string */
+    public $userNotes;
+
     /** @var string[] */
     public $typeList;
 
@@ -23,7 +26,8 @@ class UserFrom extends Model
     public function attributeLabels()
     {
         return array_merge(parent::attributeLabels(), [
-            'notes' => Yii::t('d3notification', 'Notes'),
+            'notes' => Yii::t('d3notification', 'Other name'),
+            'userNotes' => Yii::t('d3notification', 'Notes'),
             'typeId' => Yii::t('d3notification', 'Type')
         ]);
     }
@@ -31,9 +35,9 @@ class UserFrom extends Model
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            [['typeId', 'notes'], 'required'],
+            [['typeId', 'notes','userNotes'], 'required'],
             ['typeId', 'string'],
-            ['notes', 'string', 'max' => 65535]
+            [['notes','userNotes'], 'string', 'max' => 65535]
         ]);
     }
 
