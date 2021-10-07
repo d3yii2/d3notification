@@ -2,9 +2,12 @@
 
 namespace d3yii2\d3notification\controllers;
 
+use d3system\dictionaries\SysModelsDictionary;
+use d3system\exceptions\D3ActiveRecordException;
 use d3yii2\d3notification\accessRights\D3NotesFullUserRole;
 use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nNotificationSearch;
+use d3yii2\d3notification\models\D3nStatusHistory;
 use d3yii2\d3notification\Module;
 use eaBlankonThema\yii2\web\LayoutController;
 use Exception;
@@ -64,7 +67,7 @@ class NotificationController extends LayoutController
     /**
      * Lists all D3nNotification models.
      * @return string
-     * @throws \yii\db\Exception
+     * @throws \yii\db\Exception|\yii\base\InvalidConfigException
      */
     public function actionIndex(): string
     {
@@ -102,13 +105,60 @@ class NotificationController extends LayoutController
 
     /**
      * @throws \yii\web\HttpException
+     * @throws \yii\db\Exception
      */
-    public function actionChangeStatus(int $id, int $status_id): Response
+    public function actionChangeStatus(int $id, int $status_id)
     {
-
         $model = $this->findModel($id);
         $model->status_id = $status_id;
-        $model->save();
+
+        $notificationClass = SysModelsDictionary::getClassList()[$model->sys_model_id];
+        /** @var \d3yii2\d3notification\interfaces\Notification $notificationModel */
+        $notificationModel = new $notificationClass();
+        $statusModel = new D3nStatusHistory();
+        $statusModel->notification_id = $model->id;
+        $statusModel->time = date('Y-m-d H:i:s');
+        $statusModel->user_id = Yii::$app->user->id;
+        $statusModel->status_id = $status_id;
+        if (!$transaction = Yii::$app->getDb()->beginTransaction()) {
+            throw new \yii\db\Exception('Can not initate transaction');
+        }
+        try {
+            if (method_exists($notificationModel, 'isRequiredNotes')
+                && $notificationModel->isRequiredNotes()
+            ) {
+                if (($post = $this->request->post())
+                    && $statusModel->load($post)
+                    && $statusModel->save()
+                ) {
+                    if (!$model->save()) {
+                        throw new D3ActiveRecordException($model);
+                    }
+                    $transaction->commit();
+                    return $this->redirect([
+                        'view',
+                        'id' => $id
+                    ]);
+                }
+
+                return $this->render('change_status', [
+                    'model' => $model,
+                    'notificationModel' => $notificationModel,
+                    'statusModel' => $statusModel
+                ]);
+            }
+            if (!$statusModel->save()) {
+                throw new D3ActiveRecordException($statusModel);
+            }
+            if (!$model->save()) {
+                throw new D3ActiveRecordException($model);
+            }
+            $transaction->commit();
+        } catch (Exception $e) {
+            $transaction->rollBack();
+            FlashHelper::addDanger($e->getMessage());
+            Yii::error($e->getMessage() . PHP_EOL . $e->getTraceAsString());
+        }
         return $this->redirect([
             'view',
             'id' => $id
@@ -126,8 +176,9 @@ class NotificationController extends LayoutController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $transaction = Yii::$app->getDb()->beginTransaction();
-
+        if (!$transaction = Yii::$app->getDb()->beginTransaction()) {
+            throw new \yii\db\Exception('Can not initate transaction');
+        }
         try {
             $model->delete();
             $transaction->commit();

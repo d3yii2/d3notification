@@ -62,4 +62,6 @@ interface Notification
      * @return int[]
      */
     public static function getNotificationActualStatuses(): array;
+
+    public function isRequiredNotes(): bool;
 }

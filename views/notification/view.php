@@ -81,7 +81,7 @@ echo DetailView::widget([
         [
             'attribute' => 'type_id',
             'label' => Yii::t('d3notification', 'Type'),
-            'value' => D3nTypeDictionary::getList()[$model->type_id],
+            'value' => D3nTypeDictionary::getList()[$model->type_id] ??'-',
 
         ],
         [
@@ -176,7 +176,6 @@ echo DetailView::widget([
                     [
                         'attribute' => 'time',
                     ],
-
                     [
                         'attribute' => 'user_id',
                         'header' => 'User',
@@ -186,8 +185,8 @@ echo DetailView::widget([
                             }
                             return $user->username;
                         }
-
                     ],
+                    'notes'
 
                 ]
             ]);

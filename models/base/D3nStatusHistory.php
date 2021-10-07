@@ -4,11 +4,8 @@
 
 namespace d3yii2\d3notification\models\base;
 
-use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
-use d3yii2\d3notification\models\D3nStatusHistoryQuery;
 use Yii;
-use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
+use d3system\behaviors\D3DateTimeBehavior;
 
 /**
  * This is the base-model class for table "d3n_status_history".
@@ -18,12 +15,13 @@ use yii\db\ActiveRecord;
  * @property integer $status_id
  * @property string $time
  * @property integer $user_id
+ * @property string $notes
  *
  * @property \d3yii2\d3notification\models\D3nNotification $notification
  * @property \d3yii2\d3notification\models\D3nStatus $status
  * @property string $aliasModel
  */
-abstract class D3nStatusHistory extends ActiveRecord
+abstract class D3nStatusHistory extends \yii\db\ActiveRecord
 {
 
 
@@ -36,17 +34,19 @@ abstract class D3nStatusHistory extends ActiveRecord
         return 'd3n_status_history';
     }
 
-
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
-        return [
-            // 'attributeTypes' will be composed automatically according to `rules()`
+        $behaviors = [
         ];
+        $behaviors = array_merge(
+            $behaviors,
+            D3DateTimeBehavior::getConfig(['time'])
+        );
+        return $behaviors;
     }
-
 
     /**
      * @inheritdoc
@@ -54,13 +54,14 @@ abstract class D3nStatusHistory extends ActiveRecord
     public function rules()
     {
         return [
+            'required' => [['notification_id'], 'required'],
             'smallint Unsigned' => [['status_id'],'integer' ,'min' => 0 ,'max' => 65535],
             'integer Unsigned' => [['id','notification_id','user_id'],'integer' ,'min' => 0 ,'max' => 4294967295],
-            [['notification_id', 'status_id'], 'required'],
             [['time'], 'safe'],
+            [['notes'], 'string'],
             [['notification_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nNotification::className(), 'targetAttribute' => ['notification_id' => 'id']],
-            //[['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']]
-            ['status_id', 'in', 'range' => array_keys(D3nStatusDictionary::getList())],
+            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
+            'D3DateTimeBehavior' => [['time_local'],'safe']
         ];
     }
 
@@ -75,11 +76,12 @@ abstract class D3nStatusHistory extends ActiveRecord
             'status_id' => Yii::t('d3notification', 'Status ID'),
             'time' => Yii::t('d3notification', 'Time'),
             'user_id' => Yii::t('d3notification', 'User ID'),
+            'notes' => Yii::t('d3notification', 'Notes'),
         ];
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getNotification()
     {
@@ -87,7 +89,7 @@ abstract class D3nStatusHistory extends ActiveRecord
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getStatus()
     {
@@ -98,12 +100,11 @@ abstract class D3nStatusHistory extends ActiveRecord
     
     /**
      * @inheritdoc
-     * @return D3nStatusHistoryQuery the active query used by this AR class.
+     * @return \d3yii2\d3notification\models\D3nStatusHistoryQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new D3nStatusHistoryQuery(get_called_class());
+        return new \d3yii2\d3notification\models\D3nStatusHistoryQuery(get_called_class());
     }
-
 
 }
