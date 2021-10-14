@@ -9,7 +9,9 @@ use yii\helpers\Html;
 $statusList = D3nStatusDictionary::getList();
 $typeList = D3nTypeDictionary::getList();
 /** @var array $data */
-echo ThTableSimple2::widget([
+?>
+<div class="panel  rounded shadow col-sm-10 col-md-14 col-lg-10">
+<?=ThTableSimple2::widget([
     'tableOptions' => [
         'class' => 'table table-striped table-success'
     ],
@@ -41,4 +43,5 @@ echo ThTableSimple2::widget([
         ],
     ],
     'data' => $data
-]);
+])?>
+</div>
