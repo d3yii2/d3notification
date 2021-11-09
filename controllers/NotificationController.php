@@ -8,16 +8,21 @@ use d3yii2\d3notification\accessRights\D3NotesFullUserRole;
 use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nNotificationSearch;
 use d3yii2\d3notification\models\D3nStatusHistory;
+use d3yii2\d3notification\models\D3nType;
+use d3yii2\d3notification\models\D3nTypeUser;
 use d3yii2\d3notification\Module;
 use eaBlankonThema\yii2\web\LayoutController;
 use Exception;
 use thrieu\grid\ClearFilterStateBehavior;
 use Throwable;
 use Yii;
+use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\web\HttpException;
 use yii\filters\AccessControl;
 use eaBlankonThema\components\FlashHelper;
 use yii\web\Response;
+use yii2d3\d3persons\models\User;
 
 /**
  * NotificationController implements the CRUD actions for D3nNotification model.
@@ -51,7 +56,10 @@ class NotificationController extends LayoutController
                             'index',
                             'view',
                             'change-status',
-                            'delete'
+                            'delete',
+                            'add-person',
+                            'remove-person',
+                            'persons',
                         ],
                         'roles' => [
                             D3NotesFullUserRole::NAME
@@ -64,6 +72,70 @@ class NotificationController extends LayoutController
     }
 
 
+    public function actionPersons()
+    {
+        $types = D3nType::find()
+            ->joinWith('d3nTypeUsers')
+            ->joinWith('d3nTypeUsers.user')
+            ->all();
+        
+        return $this->render('persons', compact('types'));
+    }
+    
+    public function actionAddPerson(int $id)
+    {
+        $type = D3nType::findOne($id);
+        
+        $model = new D3nTypeUser();
+        $model->type_id = $type->id;
+        $model->alert_type = D3nTypeUser::ALERT_TYPE_EMAIL;
+
+        //@FIXME TMP hacks - jāstaisa korekta ajax meklēšana formā
+        $model->user_id = 4;
+ 
+        try {
+    
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        
+                $user = User::findOne($model->user_id);
+                
+                if ($user->id === $model->user_id) {
+                    throw new \yii\base\Exception('This User added already');
+                }
+        
+                if (!$model->save()) {
+                    throw new D3ActiveRecordException($model);
+                }
+                FlashHelper::addSuccess(Yii::t('d3notification', 'Person added to notification'));
+                $this->redirect(Url::to(['persons']));
+            }
+        } catch (Exception $e) {
+            FlashHelper::processException($e);
+            Yii::error($e->getMessage() . PHP_EOL . $e->getTraceAsString());
+        }
+        
+        return $this->render('add-person-form', compact('model'));
+    }
+    
+    public function actionRemovePerson(int $id)
+    {
+        try {
+            $user = D3nTypeUser::findOne($id);
+    
+            if ($user) {
+                if (!$user->delete()) {
+                    throw new \yii\db\Exception('Cannot delete notification person: ' . Json::encode($user->getErrors()));
+                }
+                FlashHelper::addSuccess(Yii::t('d3notification', 'Notification Person removed'));
+            }
+        } catch (\yii\base\Exception $e) {
+            Yii::error($e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            FlashHelper::processException($e);
+        }
+        
+        return $this->redirect(Url::to(['/d3notification/notification/persons']));
+    }
+    
     /**
      * Lists all D3nNotification models.
      * @return string

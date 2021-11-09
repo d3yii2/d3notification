@@ -5,6 +5,7 @@
 namespace d3yii2\d3notification\models\base;
 
 use Yii;
+use yii2d3\d3persons\models\User;
 
 /**
  * This is the base-model class for table "d3n_type_user".
@@ -15,6 +16,7 @@ use Yii;
  * @property string $alert_type
  *
  * @property \d3yii2\d3notification\models\D3nType $type
+ * @property \d3yii2\d3notification\models\User $user
  * @property string $aliasModel
  */
 abstract class D3nTypeUser extends \d3system\models\D3ActiveRecord
@@ -46,9 +48,10 @@ abstract class D3nTypeUser extends \d3system\models\D3ActiveRecord
                 ]
             ],
             'smallint Unsigned' => [['type_id','id'],'integer' ,'min' => 0 ,'max' => 65535],
-            'integer Unsigned' => [['user_id'],'integer' ,'min' => 0 ,'max' => 4294967295],
+            'integer Signed' => [['user_id'],'integer' ,'min' => -2147483648 ,'max' => 2147483647],
             [['alert_type'], 'string'],
-            [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']]
+            [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']]
         ];
     }
 
@@ -71,6 +74,14 @@ abstract class D3nTypeUser extends \d3system\models\D3ActiveRecord
     public function getType()
     {
         return $this->hasOne(\d3yii2\d3notification\models\D3nType::className(), ['id' => 'type_id'])->inverseOf('d3nTypeUsers');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']); //->inverseOf('d3nTypeUsers');
     }
 
 
