@@ -80,18 +80,6 @@ $this->setPageIcon('info');
                     'list' => D3nStatusDictionary::getList()
                 ],
                 [
-                    'attribute' => 'userId',
-                    'class' => ThDataListColumn::class,
-                    'header' => Yii::t('d3notification',  'User'),
-                    'list' => UserDictionary::getList(),
-                    'value' => static function (D3nNotificationSearch $model) {
-                        return $model->userNamesList;
-                    },
-                    'externalLinkUrl' => ['/d3persons/user/view', 'id' => '@id'],
-                ],
-//                'model_record_id',
-//                'key',
-                [
                     'attribute' => 'data',
                     'format' => 'raw'
                  ],

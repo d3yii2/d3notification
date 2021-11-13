@@ -8,7 +8,8 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use d3system\exceptions\D3ActiveRecordException;
 
-class D3nTypeDictionary{
+class D3nTypeDictionary
+{
 
     private const CACHE_KEY_LIST = 'D3nTypeDictionaryList';
     private const CACHE_KEY_NOTIFICATION_LIST = 'D3nTypeDictionaryNotificationList';

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemadesigner version="6.5">
 <source>
-<database charset="latin1" collation="latin1_swedish_ci">coalmar_20200902</database>
+<database charset="latin1" collation="latin1_swedish_ci">aluksne</database>
 </source>
 <canvas zoom="100">
 <tables>
 <table name="d3n_notification" view="colnames">
-<left>393</left>
-<top>283</top>
+<left>612</left>
+<top>151</top>
 <width>134</width>
 <height>219</height>
 <sql_create_table>CREATE TABLE `d3n_notification` (
@@ -19,7 +19,8 @@
   `key` int(10) unsigned NOT NULL,
   `status_id` smallint(5) unsigned NOT NULL,
   `type_id` smallint(5) unsigned DEFAULT NULL,
-  `data` text CHARACTER SET utf8,
+  `data` text,
+  `notes` text,
   PRIMARY KEY (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   KEY `status_id` (`status_id`),
@@ -28,11 +29,11 @@
   CONSTRAINT `d3n_notification_ibfk_status` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`),
   CONSTRAINT `d3n_notification_ibfk_sys_model` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`),
   CONSTRAINT `d3n_notification_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3377 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="sys_models" view="colnames">
-<left>575</left>
-<top>468</top>
+<left>132</left>
+<top>208</top>
 <width>105</width>
 <height>114</height>
 <sql_create_table>CREATE TABLE `sys_models` (
@@ -41,11 +42,11 @@
   `class_name` varchar(256) DEFAULT NULL COMMENT 'Class',
   PRIMARY KEY (`id`),
   UNIQUE KEY `table_name` (`table_name`,`class_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=ascii</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=ascii</sql_create_table>
 </table>
 <table name="d3n_status" view="colnames">
-<left>719</left>
-<top>401</top>
+<left>288</left>
+<top>98</top>
 <width>116</width>
 <height>131</height>
 <sql_create_table>CREATE TABLE `d3n_status` (
@@ -57,29 +58,30 @@
   KEY `id` (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   CONSTRAINT `d3n_status_ibfk_1` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3n_status_history" view="colnames">
-<left>570</left>
-<top>216</top>
+<left>454</left>
+<top>14</top>
 <width>117</width>
 <height>148</height>
 <sql_create_table>CREATE TABLE `d3n_status_history` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `notification_id` int(10) unsigned NOT NULL,
-  `status_id` smallint(5) unsigned NOT NULL,
+  `status_id` smallint(5) unsigned DEFAULT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `user_id` int(10) unsigned DEFAULT NULL,
+  `notes` text CHARACTER SET utf8,
   PRIMARY KEY (`id`),
   KEY `notification_id` (`notification_id`),
   KEY `status_id` (`status_id`),
   CONSTRAINT `d3n_status_history_ibfk_notification` FOREIGN KEY (`notification_id`) REFERENCES `d3n_notification` (`id`),
   CONSTRAINT `d3n_status_history_ibfk_status` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3722 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3n_type" view="colnames">
-<left>245</left>
-<top>454</top>
+<left>277</left>
+<top>281</top>
 <width>116</width>
 <height>131</height>
 <sql_create_table>CREATE TABLE `d3n_type` (
@@ -91,21 +93,63 @@
   KEY `id` (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   CONSTRAINT `d3n_type_ibfk_sys_model` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3n_type_user" view="colnames">
-<left>70</left>
-<top>438</top>
-<width>111</width>
-<height>114</height>
+<left>429</left>
+<top>353</top>
+<width>136</width>
+<height>144</height>
 <sql_create_table>CREATE TABLE `d3n_type_user` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `type_id` smallint(5) unsigned NOT NULL,
-  `user_id` int(10) unsigned NOT NULL,
+  `person_id` smallint(5) unsigned NOT NULL COMMENT 'Person',
+  `type_id` smallint(5) unsigned NOT NULL COMMENT 'Type',
+  `alert_type` enum('email') DEFAULT 'email' COMMENT 'Alert Type',
+  `person_contact_id` smallint(5) unsigned DEFAULT NULL COMMENT 'Person Contact',
   PRIMARY KEY (`id`),
   KEY `type_id` (`type_id`),
-  CONSTRAINT `d3n_type_user_ibfk_1` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
+  KEY `d3n_type_user_user_id_fk` (`person_id`),
+  KEY `d3n_type_user_ibfk_person_contact` (`person_contact_id`),
+  CONSTRAINT `d3n_type_user_ibfk_person` FOREIGN KEY (`person_id`) REFERENCES `d3p_person` (`id`),
+  CONSTRAINT `d3n_type_user_ibfk_person_contact` FOREIGN KEY (`person_contact_id`) REFERENCES `d3p_person_contact` (`id`),
+  CONSTRAINT `d3n_type_user_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1</sql_create_table>
+</table>
+<table name="d3p_person" view="colnames">
+<left>615</left>
+<top>454</top>
+<width>109</width>
+<height>182</height>
+<sql_create_table>CREATE TABLE `d3p_person` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL COMMENT 'First name',
+  `last_name` varchar(255) DEFAULT NULL COMMENT 'Last name',
+  `public_email` varchar(255) DEFAULT NULL COMMENT 'Public Email',
+  `gravatar_id` varchar(32) DEFAULT NULL COMMENT 'Gravatar',
+  `timezone` varchar(40) DEFAULT NULL COMMENT 'Timezone',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `d3p_person_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8</sql_create_table>
+</table>
+<table name="d3p_person_contact" view="colnames">
+<left>256</left>
+<top>492</top>
+<width>138</width>
+<height>148</height>
+<sql_create_table>CREATE TABLE `d3p_person_contact` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `person_id` smallint(5) unsigned NOT NULL COMMENT 'Person',
+  `contact_type` tinyint(3) unsigned DEFAULT NULL COMMENT 'Type',
+  `contact_value` varchar(255) DEFAULT NULL COMMENT 'Value',
+  `notes` text COMMENT 'Notes',
+  PRIMARY KEY (`id`),
+  KEY `person_id` (`person_id`),
+  KEY `contact_type` (`contact_type`),
+  CONSTRAINT `d3p_person_contact_ibfk_1` FOREIGN KEY (`person_id`) REFERENCES `d3p_person` (`id`),
+  CONSTRAINT `d3p_person_contact_ibfk_2` FOREIGN KEY (`contact_type`) REFERENCES `d3p_contact_type` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</sql_create_table>
 </table>
 </tables>
 </canvas>

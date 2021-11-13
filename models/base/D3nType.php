@@ -15,7 +15,6 @@ use Yii;
  * @property string $label
  *
  * @property \d3yii2\d3notification\models\D3nNotification[] $d3nNotifications
- * @property \d3yii2\d3notification\models\D3nTypeUser[] $d3nTypeUsers
  * @property \d3yii2\d3notification\models\SysModels $sysModel
  * @property string $aliasModel
  */
@@ -70,19 +69,9 @@ abstract class D3nType extends \d3system\models\D3ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getD3nTypeUsers()
-    {
-        return $this->hasMany(\d3yii2\d3notification\models\D3nTypeUser::className(), ['type_id' => 'id'])->inverseOf('type');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getSysModel()
     {
         return $this->hasOne(\d3yii2\d3notification\models\SysModels::className(), ['id' => 'sys_model_id'])->inverseOf('d3nTypes');
     }
-
-
-
 }
+
