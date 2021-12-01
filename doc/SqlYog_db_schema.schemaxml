@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemadesigner version="6.5">
 <source>
-<database charset="latin1" collation="latin1_swedish_ci">coalmar_20200902</database>
+<database charset="latin1" collation="latin1_swedish_ci">cewood_20210329</database>
 </source>
 <canvas zoom="100">
 <tables>
@@ -19,7 +19,8 @@
   `key` int(10) unsigned NOT NULL,
   `status_id` smallint(5) unsigned NOT NULL,
   `type_id` smallint(5) unsigned DEFAULT NULL,
-  `data` text CHARACTER SET utf8,
+  `data` text,
+  `notes` text,
   PRIMARY KEY (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   KEY `status_id` (`status_id`),
@@ -28,7 +29,7 @@
   CONSTRAINT `d3n_notification_ibfk_status` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`),
   CONSTRAINT `d3n_notification_ibfk_sys_model` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`),
   CONSTRAINT `d3n_notification_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3377 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="sys_models" view="colnames">
 <left>575</left>
@@ -41,7 +42,7 @@
   `class_name` varchar(256) DEFAULT NULL COMMENT 'Class',
   PRIMARY KEY (`id`),
   UNIQUE KEY `table_name` (`table_name`,`class_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=ascii</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=ascii</sql_create_table>
 </table>
 <table name="d3n_status" view="colnames">
 <left>719</left>
@@ -57,7 +58,7 @@
   KEY `id` (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   CONSTRAINT `d3n_status_ibfk_1` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3n_status_history" view="colnames">
 <left>570</left>
@@ -67,15 +68,16 @@
 <sql_create_table>CREATE TABLE `d3n_status_history` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `notification_id` int(10) unsigned NOT NULL,
-  `status_id` smallint(5) unsigned NOT NULL,
+  `status_id` smallint(5) unsigned DEFAULT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `user_id` int(10) unsigned DEFAULT NULL,
+  `notes` text CHARACTER SET utf8,
   PRIMARY KEY (`id`),
   KEY `notification_id` (`notification_id`),
   KEY `status_id` (`status_id`),
   CONSTRAINT `d3n_status_history_ibfk_notification` FOREIGN KEY (`notification_id`) REFERENCES `d3n_notification` (`id`),
   CONSTRAINT `d3n_status_history_ibfk_status` FOREIGN KEY (`status_id`) REFERENCES `d3n_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3722 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3n_type" view="colnames">
 <left>245</left>
@@ -91,7 +93,7 @@
   KEY `id` (`id`),
   KEY `sys_model_id` (`sys_model_id`),
   CONSTRAINT `d3n_type_ibfk_sys_model` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3n_type_user" view="colnames">
 <left>70</left>
@@ -99,12 +101,13 @@
 <width>111</width>
 <height>114</height>
 <sql_create_table>CREATE TABLE `d3n_type_user` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `type_id` smallint(5) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
+  `type_id` smallint(5) unsigned NOT NULL,
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `alert_type` enum('email') DEFAULT 'email',
   PRIMARY KEY (`id`),
   KEY `type_id` (`type_id`),
-  CONSTRAINT `d3n_type_user_ibfk_1` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
+  CONSTRAINT `d3n_type_user_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 </tables>
