@@ -51,7 +51,7 @@ class NotificationController extends LayoutController
                             'index',
                             'view',
                             'change-status',
-                            'delete'
+                            'delete',
                         ],
                         'roles' => [
                             D3NotesFullUserRole::NAME
@@ -62,7 +62,6 @@ class NotificationController extends LayoutController
             'clearFilterState' => ClearFilterStateBehavior::class,
         ];
     }
-
 
     /**
      * Lists all D3nNotification models.

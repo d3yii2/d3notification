@@ -12,7 +12,6 @@ use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nStatusHistory;
 use Yii;
 use yii\base\BaseObject;
-use yii\base\Exception;
 use yii\helpers\Json;
 
 class NotificationLogic extends BaseObject
@@ -37,7 +36,8 @@ class NotificationLogic extends BaseObject
 
     /**
      * @param Notification $notificationModel
-     * @param string|null $otherName
+     * @param string|null $notes
+     * @param string|null $userNotes
      * @throws \d3system\exceptions\D3ActiveRecordException
      * @throws \d3system\exceptions\D3UserAlertException
      */
@@ -76,7 +76,8 @@ class NotificationLogic extends BaseObject
 
     /**
      * @param D3nNotification $model
-     * @throws D3ActiveRecordException
+     * @param string|null $notes
+     * @throws \d3system\exceptions\D3ActiveRecordException
      */
     private function saveStatusHistory(D3nNotification $model, string $notes = null): void
     {
@@ -93,7 +94,7 @@ class NotificationLogic extends BaseObject
 
     /**
      * @param Notification $notificationModel
-     * @throws D3ActiveRecordException
+     * @throws D3ActiveRecordException|\d3system\exceptions\D3UserAlertException
      */
     public function changeStatus(Notification $notificationModel): void
     {
@@ -114,8 +115,9 @@ class NotificationLogic extends BaseObject
 
     /**
      * @param Notification $notificationModel
+     * @param string|null $notes
      * @return D3nNotification[]
-     * @throws D3ActiveRecordException
+     * @throws \d3system\exceptions\D3ActiveRecordException
      */
     public function getNotifications(Notification $notificationModel, string $notes = null): array
     {

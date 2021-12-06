@@ -16,7 +16,6 @@ use yii\db\Exception;
 class D3nNotificationSearch extends D3nNotification
 {
     public $userId;
-    public $userNamesList;
 
     public function behaviors(): array
     {
@@ -99,14 +98,8 @@ class D3nNotificationSearch extends D3nNotification
     {
         return self::find()
             ->select([
-                'd3n_notification.*',
-                'userNamesList' => 'GROUP_CONCAT(DISTINCT user.username SEPARATOR \',\')'
+                'd3n_notification.*'
             ])
-            ->leftJoin(
-                'd3n_type_user',
-                'd3n_type_user.type_id = d3n_notification.type_id'
-            )
-            ->leftJoin('user', 'user.id = d3n_type_user.user_id')
             ->andFilterWhere([
                 'd3n_notification.id' => $this->id,
                 'd3n_notification.sys_company_id' => Yii::$app->SysCmp->getActiveCompanyId(),
@@ -115,7 +108,6 @@ class D3nNotificationSearch extends D3nNotification
                 'd3n_notification.key' => $this->key,
                 'd3n_notification.type_id' => $this->type_id,
                 'd3n_notification.status_id' => $this->status_id,
-                'd3n_type_user.user_id' => $this->userId,
             ])
             ->andFilterWhere(['like', 'd3n_notification.data', $this->data])
             ->andFilterWhereDateRange('d3n_notification.time', $this->time)
