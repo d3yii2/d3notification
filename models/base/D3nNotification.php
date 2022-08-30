@@ -4,6 +4,10 @@
 
 namespace d3yii2\d3notification\models\base;
 
+use d3system\dictionaries\SysModelsDictionary;
+use d3system\models\D3ActiveRecord;
+use d3yii2\d3notification\models\D3nNotificationQuery;
+use d3yii2\d3notification\models\SysModels;
 use Yii;
 use d3system\behaviors\D3DateTimeBehavior;
 
@@ -27,7 +31,7 @@ use d3system\behaviors\D3DateTimeBehavior;
  * @property \d3yii2\d3notification\models\D3nType $type
  * @property string $aliasModel
  */
-abstract class D3nNotification extends \d3system\models\D3ActiveRecord
+abstract class D3nNotification extends D3ActiveRecord
 {
 
 
@@ -67,7 +71,7 @@ abstract class D3nNotification extends \d3system\models\D3ActiveRecord
             [['time'], 'safe'],
             [['data', 'notes'], 'string'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
-            [['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']],
+            [['sys_model_id'], 'in', 'range' => array_keys(SysModelsDictionary::getClassList())],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\D3nType::className(), 'targetAttribute' => ['type_id' => 'id']],
             'D3DateTimeBehavior' => [['time_local'],'safe']
         ];
@@ -113,7 +117,7 @@ abstract class D3nNotification extends \d3system\models\D3ActiveRecord
      */
     public function getSysModel()
     {
-        return $this->hasOne(\d3yii2\d3notification\models\SysModels::className(), ['id' => 'sys_model_id']);
+        return $this->hasOne(SysModels::className(), ['id' => 'sys_model_id']);
     }
 
     /**
@@ -132,7 +136,7 @@ abstract class D3nNotification extends \d3system\models\D3ActiveRecord
      */
     public static function find()
     {
-        return new \d3yii2\d3notification\models\D3nNotificationQuery(get_called_class());
+        return new D3nNotificationQuery(get_called_class());
     }
 
 }
