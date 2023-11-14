@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemadesigner version="6.5">
 <source>
-<database charset="latin1" collation="latin1_swedish_ci">cewood_20210329</database>
+<database charset="latin1" collation="latin1_swedish_ci">adrona</database>
 </source>
 <canvas zoom="100">
 <tables>
@@ -35,14 +35,14 @@
 <left>575</left>
 <top>468</top>
 <width>105</width>
-<height>114</height>
+<height>106</height>
 <sql_create_table>CREATE TABLE `sys_models` (
   `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `table_name` varchar(256) NOT NULL COMMENT 'Table',
   `class_name` varchar(256) DEFAULT NULL COMMENT 'Class',
   PRIMARY KEY (`id`),
   UNIQUE KEY `table_name` (`table_name`,`class_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=ascii</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=ascii</sql_create_table>
 </table>
 <table name="d3n_status" view="colnames">
 <left>719</left>
@@ -83,7 +83,7 @@
 <left>245</left>
 <top>454</top>
 <width>116</width>
-<height>131</height>
+<height>112</height>
 <sql_create_table>CREATE TABLE `d3n_type` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `sys_model_id` tinyint(3) unsigned NOT NULL,
@@ -95,19 +95,24 @@
   CONSTRAINT `d3n_type_ibfk_sys_model` FOREIGN KEY (`sys_model_id`) REFERENCES `sys_models` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
-<table name="d3n_type_user" view="colnames">
-<left>70</left>
-<top>438</top>
-<width>111</width>
-<height>114</height>
-<sql_create_table>CREATE TABLE `d3n_type_user` (
-  `user_id` int(10) unsigned NOT NULL,
-  `type_id` smallint(5) unsigned NOT NULL,
+<table name="d3na_type_person" view="colnames">
+<left>66</left>
+<top>420</top>
+<width>142</width>
+<height>133</height>
+<sql_create_table>CREATE TABLE `d3na_type_person` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `alert_type` enum('email') DEFAULT 'email',
+  `person_id` smallint(5) unsigned NOT NULL,
+  `type_id` smallint(5) unsigned NOT NULL,
+  `person_contact_id` smallint(5) unsigned DEFAULT NULL,
+  `active` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `type_id` (`type_id`),
-  CONSTRAINT `d3n_type_user_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
+  KEY `d3na_type_user_ibfk_person` (`person_id`),
+  KEY `d3na_type_user_ibfk_type` (`type_id`),
+  KEY `d3na_type_user_ibfk_person_contact` (`person_contact_id`),
+  CONSTRAINT `d3na_type_user_ibfk_person` FOREIGN KEY (`person_id`) REFERENCES `d3p_person` (`id`),
+  CONSTRAINT `d3na_type_user_ibfk_person_contact` FOREIGN KEY (`person_contact_id`) REFERENCES `d3p_person_contact` (`id`),
+  CONSTRAINT `d3na_type_user_ibfk_type` FOREIGN KEY (`type_id`) REFERENCES `d3n_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 </tables>
