@@ -6,6 +6,11 @@ class m200414_110707_init  extends Migration {
 
     public function safeUp() {
 
+        $this->execute('DROP TABLE IF EXISTS d3n_status_history');
+        $this->execute('DROP TABLE IF EXISTS d3n_notification');
+        $this->execute('DROP TABLE IF EXISTS d3n_status');
+        $this->execute('DROP TABLE IF EXISTS d3na_type_personn');
+        $this->execute('DROP TABLE IF EXISTS d3n_type');
         $this->execute('
             CREATE TABLE `d3n_status` (
               `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
