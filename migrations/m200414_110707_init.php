@@ -9,7 +9,7 @@ class m200414_110707_init  extends Migration {
         $this->execute('DROP TABLE IF EXISTS d3n_status_history');
         $this->execute('DROP TABLE IF EXISTS d3n_notification');
         $this->execute('DROP TABLE IF EXISTS d3n_status');
-        $this->execute('DROP TABLE IF EXISTS d3na_type_personn');
+        $this->execute('DROP TABLE IF EXISTS d3na_type_person');
         $this->execute('DROP TABLE IF EXISTS d3n_type');
         $this->execute('
             CREATE TABLE `d3n_status` (
