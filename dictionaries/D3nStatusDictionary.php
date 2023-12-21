@@ -10,8 +10,8 @@ use d3system\exceptions\D3ActiveRecordException;
 
 class D3nStatusDictionary{
 
-    private const CACHE_KEY_LIST = 'D3nStatusDictionaryList';
-    private const CACHE_KEY_NOTIFICATION_LIST = 'D3nStatusDictionaryNotificationList';
+    private const CACHE_KEY_LIST = 'D3nStatusDictionaryList1';
+    private const CACHE_KEY_NOTIFICATION_LIST = 'D3nStatusDictionaryNotificationList1';
 
     public static function getIdByNotificationStatus(
         int $sysModelId,
@@ -42,12 +42,12 @@ class D3nStatusDictionary{
         return self::getListByNotification()[$sysModelId . '-' . $statusId];
     }
 
-    public static function getList(): array
+    public static function getList(array $translations = []): array
     {
         return Yii::$app->cache->getOrSet(
             self::CACHE_KEY_NOTIFICATION_LIST,
-            static function () {
-                return ArrayHelper::map(
+            static function () use ($translations)  {
+                $list = ArrayHelper::map(
                     D3nStatus::find()
                     ->select([
                         'id' => 'id',
@@ -63,7 +63,20 @@ class D3nStatusDictionary{
                 'id',
                 'name'
                 );
-            }
+                if ($translations) {
+                    foreach ($list as $id => $name) {
+                        foreach ($translations as $translation) {
+                            $newName = Yii::t($translation, $name);
+                            if ($newName !== $name) {
+                                $list[$id] = $newName;
+                                break;
+                            }
+                        }
+                    }
+                }
+                return $list;
+            },
+            3600
         );
     }
 

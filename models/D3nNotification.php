@@ -5,6 +5,7 @@ namespace d3yii2\d3notification\models;
 use d3system\dictionaries\SysModelsDictionary;
 use d3yii2\d3notification\interfaces\Notification;
 use \d3yii2\d3notification\models\base\D3nNotification as BaseD3nNotification;
+use PhpParser\Node\Expr\Cast\Object_;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\helpers\Json;
@@ -16,11 +17,10 @@ class D3nNotification extends BaseD3nNotification
 {
     public $user;
 
-    /** @var Notification */
-    private $model;
+    public ?object $model = null;
 
     /**
-     * @return bool|Notification
+     * @return bool|Object
      * @throws Exception
      */
     public function getNotificationModel()

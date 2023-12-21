@@ -9,6 +9,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
+use yii\helpers\Json;
 
 /**
  * D3nNotificationSearch represents the model behind the search form about `d3yii2\d3notification\models\D3nNotification`.
@@ -18,6 +19,7 @@ use yii\db\Exception;
 class D3nNotificationSearch extends D3nNotification
 {
     public ?int $userId = null;
+    public ?int $reportUserId = null;
 
     public function behaviors(): array
     {
@@ -115,5 +117,14 @@ class D3nNotificationSearch extends D3nNotification
             ->andFilterWhere(['like', 'd3n_notification.data', $this->data])
             ->andFilterWhereDateRange('d3n_notification.time', $this->time)
             ->groupBy('d3n_notification.id');
+    }
+
+    public function getReportUserId()
+    {
+        if (!$this->data) {
+            return null;
+        }
+        $data = Json::decode($this->data);
+        return $data['reportUserId']??null;
     }
 }
