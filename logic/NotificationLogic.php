@@ -4,7 +4,6 @@ namespace d3yii2\d3notification\logic;
 
 use d3system\dictionaries\SysModelsDictionary;
 use d3system\exceptions\D3ActiveRecordException;
-use d3system\exceptions\D3UserAlertException;
 use d3yii2\d3notification\dictionaries\D3nStatusDictionary;
 use d3yii2\d3notification\dictionaries\D3nTypeDictionary;
 use d3yii2\d3notification\interfaces\Notification;
@@ -12,15 +11,13 @@ use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nStatusHistory;
 use Yii;
 use yii\base\BaseObject;
+use yii\base\UserException;
 use yii\helpers\Json;
 
 class NotificationLogic extends BaseObject
 {
-    /** @var int */
-    private $sysCompanyId;
-
-    /** @var int */
-    private $userId;
+    private ?int $sysCompanyId = null;
+    private ?int $userId = null;
 
     /**
      * NotificationLogic constructor.
@@ -38,8 +35,8 @@ class NotificationLogic extends BaseObject
      * @param Notification $notificationModel
      * @param string|null $notes
      * @param string|null $userNotes
-     * @throws \d3system\exceptions\D3ActiveRecordException
-     * @throws \d3system\exceptions\D3UserAlertException
+     * @throws D3ActiveRecordException
+     * @throws UserException
      */
     public function register(
         Notification $notificationModel,
@@ -48,7 +45,7 @@ class NotificationLogic extends BaseObject
     ): void {
         $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
         if ($this->getNotifications($notificationModel, $notes)) {
-            throw new D3UserAlertException(Yii::t('d3notification', 'An alert of this type has already been added'));
+            throw new UserException(Yii::t('d3notification', 'An alert of this type has already been added'));
         }
 
         $model = new D3nNotification();
@@ -77,7 +74,7 @@ class NotificationLogic extends BaseObject
     /**
      * @param D3nNotification $model
      * @param string|null $notes
-     * @throws \d3system\exceptions\D3ActiveRecordException
+     * @throws D3ActiveRecordException
      */
     private function saveStatusHistory(D3nNotification $model, string $notes = null): void
     {
@@ -94,7 +91,7 @@ class NotificationLogic extends BaseObject
 
     /**
      * @param Notification $notificationModel
-     * @throws D3ActiveRecordException|\d3system\exceptions\D3UserAlertException
+     * @throws D3ActiveRecordException|UserException
      */
     public function changeStatus(Notification $notificationModel): void
     {
@@ -117,7 +114,7 @@ class NotificationLogic extends BaseObject
      * @param Notification $notificationModel
      * @param string|null $notes
      * @return D3nNotification[]
-     * @throws \d3system\exceptions\D3ActiveRecordException
+     * @throws D3ActiveRecordException
      */
     public function getNotifications(Notification $notificationModel, string $notes = null): array
     {

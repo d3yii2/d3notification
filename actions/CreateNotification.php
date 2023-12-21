@@ -2,45 +2,66 @@
 
 namespace d3yii2\d3notification\actions;
 
-
-use d3system\exceptions\D3UserAlertException;
+use cornernote\returnurl\ReturnUrl;
+use d3system\helpers\FlashHelper;
 use d3yii2\d3notification\interfaces\Notification;
 use d3yii2\d3notification\logic\NotificationLogic;
 use d3yii2\d3notification\models\forms\UserFrom;
-use eaBlankonThema\components\FlashHelper;
 use Yii;
 use yii\base\Action;
+use yii\base\UserException;
+use yii\db\ActiveRecord;
 use yii\db\Exception;
 
 class CreateNotification extends Action
 {
-    /** @var string */
-    public $notificationModelClass;
+    public ?string $notificationModelClass = null;
 
-    /** @var int */
-    public $typeId;
+    public ?int $typeId = null;
 
     /** @var string[]  */
-    public $notesList = [];
+    public array $notesList = [];
 
     /** @var array */
-    public $backUrl;
+    public ?array $backUrl = null;
+
+    public string $viewPath = '@vendor/d3yii2/d3notification/views/actions/notification_user_form';
+    public ?string $formModelClassName = null;
+    public ?string $formTitle = null;
+    public ?string $formSubmitButtonLabel =null;
+
+    public function init(): void
+    {
+        parent::init();
+        if (!$this->formTitle) {
+            $this->formTitle = Yii::t('d3notification', 'Create Notification');
+        }
+        if (!$this->formSubmitButtonLabel) {
+            $this->formSubmitButtonLabel = Yii::t('crud', 'Add');
+        }
+        if (!$this->formModelClassName) {
+            $this->formModelClassName = UserFrom::class;
+        }
+    }
 
     /**
-     * @throws \yii\db\Exception
+     * @throws Exception
      */
     public function run(int $id)
     {
-        /** @var \yii\db\ActiveRecord $model  validate access rights*/
+        /** @var ActiveRecord $model  validate access rights*/
         $model = $this->controller->findModel($id);
-        $formModel = new UserFrom();
+        $formModel = new $this->formModelClassName;
 
-        /** @var Notification|\yii\db\ActiveRecord $notification */
+
+        /** @var Notification|ActiveRecord $notification */
         $notification = new $this->notificationModelClass;
-        $notification->attributes = $model->attributes;
+        $notification->setAttributes($model->attributes);
         $notification->typeId = $this->typeId;
         $notification->statusId = $notification->getNotificationStatusNewId();
-        $formModel->typeList = $this->notesList;
+        if (property_exists($formModel, 'typeList')) {
+            $formModel->typeList = $this->notesList;
+        }
 
         if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
             $logic = new NotificationLogic(Yii::$app->SysCmp->getActiveCompanyId(), Yii::$app->user->id);
@@ -48,10 +69,12 @@ class CreateNotification extends Action
                 throw new Exception('Can not initiate transaction');
             }
             try {
-                $logic->register($notification, $formModel->notes, $formModel->userNotes);
+                $notes = property_exists($formModel, 'notes')?$formModel->notes:null;
+                $userNotes = property_exists($formModel, 'userNotes')?$formModel->userNotes:null;
+                $logic->register($notification, $notes, $userNotes);
                 $transaction->commit();
-                return $this->controller->redirect($this->createBackUrl($id));
-            } catch (D3UserAlertException $e) {
+                return $this->controller->redirect(ReturnUrl::getUrl());
+            } catch (UserException $e) {
                 $transaction->rollBack();
                 FlashHelper::addDanger($e->getMessage());
             } catch (\Exception $e) {
@@ -59,21 +82,12 @@ class CreateNotification extends Action
                 $transaction->rollBack();
             }
         }
-        return $this->controller->render('@vendor/d3yii2/d3notification/views/actions/notification_user_form', [
+        return $this->controller->render($this->viewPath, [
             'model' => $model,
             'formModel' => $formModel,
-            'backUrl' => $this->backUrl
+            'backUrl' => $this->backUrl,
+            'formTitle' => $this->formTitle,
+            'formSubmitButtonLabel' => $this->formSubmitButtonLabel
         ]);
-    }
-
-    public function createBackUrl(int $id): array
-    {
-        $url = $this->backUrl;
-        foreach ($url as $k => $v) {
-            if ($v === '@id') {
-                $url[$k] =  $id;
-            }
-        }
-        return $url;
     }
 }

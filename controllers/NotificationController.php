@@ -5,18 +5,20 @@ namespace d3yii2\d3notification\controllers;
 use d3system\dictionaries\SysModelsDictionary;
 use d3system\exceptions\D3ActiveRecordException;
 use d3yii2\d3notification\accessRights\D3NotesFullUserRole;
+use d3yii2\d3notification\interfaces\Notification;
 use d3yii2\d3notification\models\D3nNotification;
 use d3yii2\d3notification\models\D3nNotificationSearch;
 use d3yii2\d3notification\models\D3nStatusHistory;
 use d3yii2\d3notification\Module;
-use eaBlankonThema\yii2\web\LayoutController;
+use d3system\yii2\LayoutController;
 use Exception;
 use thrieu\grid\ClearFilterStateBehavior;
 use Throwable;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\web\HttpException;
 use yii\filters\AccessControl;
-use eaBlankonThema\components\FlashHelper;
+use d3system\helpers\FlashHelper;
 use yii\web\Response;
 
 /**
@@ -66,7 +68,7 @@ class NotificationController extends LayoutController
     /**
      * Lists all D3nNotification models.
      * @return string
-     * @throws \yii\db\Exception|\yii\base\InvalidConfigException
+     * @throws \yii\db\Exception|InvalidConfigException
      */
     public function actionIndex(): string
     {
@@ -103,7 +105,7 @@ class NotificationController extends LayoutController
 
 
     /**
-     * @throws \yii\web\HttpException
+     * @throws HttpException
      * @throws \yii\db\Exception
      */
     public function actionChangeStatus(int $id, int $status_id)
@@ -112,7 +114,7 @@ class NotificationController extends LayoutController
         $model->status_id = $status_id;
 
         $notificationClass = SysModelsDictionary::getClassList()[$model->sys_model_id];
-        /** @var \d3yii2\d3notification\interfaces\Notification $notificationModel */
+        /** @var Notification $notificationModel */
         $notificationModel = new $notificationClass();
         $statusModel = new D3nStatusHistory();
         $statusModel->notification_id = $model->id;

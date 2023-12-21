@@ -35,7 +35,14 @@ return [
     ]
 ];   
 
-
+```
+## translation
+```php 
+    'd3notification' => [
+        'class' => 'yii\i18n\PhpMessageSource',
+        'basePath' => '@vendor/d3yii2/d3notification/messages',
+        'sourceLanguage' => 'en-US'
+    ],
 ```
 
 ## DB

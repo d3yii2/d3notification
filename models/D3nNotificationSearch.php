@@ -4,18 +4,20 @@ namespace d3yii2\d3notification\models;
 
 use d3system\behaviors\D3DateTimeBehavior;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use eaBlankonThema\widget\ThRmGridView;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
 
 /**
  * D3nNotificationSearch represents the model behind the search form about `d3yii2\d3notification\models\D3nNotification`.
+ *
+ * @property-read ActiveQuery $query
  */
 class D3nNotificationSearch extends D3nNotification
 {
-    public $userId;
+    public ?int $userId = null;
 
     public function behaviors(): array
     {
@@ -36,7 +38,7 @@ class D3nNotificationSearch extends D3nNotification
     /**
      * @inheritdoc
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -46,11 +48,12 @@ class D3nNotificationSearch extends D3nNotification
      * Creates data provider instance with search query applied
      *
      * @return ActiveDataProvider
-     * @throws Exception|\yii\base\InvalidConfigException
+     * @throws Exception|InvalidConfigException
      */
     public function search(): ActiveDataProvider
     {
-        $this->load(ThRmGridView::getMergedFilterStateParams());
+        $mergedFilterStateParams = Yii::$app->widget->rmGridView::getMergedFilterStateParams();
+        $this->load($mergedFilterStateParams);
 
         if (!$this->validate()) {
             return new ActiveDataProvider([
@@ -62,10 +65,10 @@ class D3nNotificationSearch extends D3nNotification
             'query' => $this->getQuery(),
             //'sort' => ['defaultOrder' => ['????' => SORT_ASC]]
             'pagination' => [
-                'params' => ThRmGridView::getMergedFilterStateParams(),
+                'params' => $mergedFilterStateParams,
             ],
             'sort' => [
-                'params' => ThRmGridView::getMergedFilterStateParams(),
+                'params' => $mergedFilterStateParams,
             ],
         ]);
     }
@@ -76,7 +79,7 @@ class D3nNotificationSearch extends D3nNotification
      * @param int $sysModelId
      * @param int $modelRecordId
      * @return ActiveDataProvider
-     * @throws Exception|\yii\base\InvalidConfigException
+     * @throws Exception|InvalidConfigException
      */
     public function searchForRecord(int $sysModelId, int $modelRecordId): ActiveDataProvider
     {
@@ -91,8 +94,8 @@ class D3nNotificationSearch extends D3nNotification
     }
 
     /**
-     * @return \yii\db\ActiveQuery
-     * @throws Exception|\yii\base\InvalidConfigException
+     * @return ActiveQuery
+     * @throws Exception|InvalidConfigException
      */
     public function getQuery(): ActiveQuery
     {
