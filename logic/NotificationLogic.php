@@ -91,12 +91,14 @@ class NotificationLogic extends BaseObject
 
     /**
      * @param Notification $notificationModel
-     * @throws D3ActiveRecordException|UserException
+     * @param int|null $prevStatusId
+     * @throws D3ActiveRecordException
+     * @throws UserException
      */
-    public function changeStatus(Notification $notificationModel): void
+    public function changeStatus(Notification $notificationModel, int $prevStatusId = null): void
     {
 
-        if (!$modelList = $this->getNotifications($notificationModel)) {
+        if (!$modelList = $this->getNotifications($notificationModel,null, $prevStatusId)) {
             $this->register($notificationModel);
             return;
         }
@@ -116,16 +118,19 @@ class NotificationLogic extends BaseObject
      * @return D3nNotification[]
      * @throws D3ActiveRecordException
      */
-    public function getNotifications(Notification $notificationModel, string $notes = null): array
+    public function getNotifications(Notification $notificationModel, string $notes = null, int $prevStatusId = null): array
     {
         $idByClassName = SysModelsDictionary::getIdByClassName(get_class($notificationModel));
+        if (!$prevStatusId) {
+            $prevStatusId = $notificationModel->getNotificationStatusNewId();
+        }
         return D3nNotification::findAll([
             'sys_company_id' => $this->sysCompanyId,
             'sys_model_id' => $idByClassName,
             'model_record_id' => $notificationModel->getNotificationRecordId(),
             'key' => $notificationModel->getNotificationKey(),
             'type_id' => D3nTypeDictionary::getIdByNotificationType($idByClassName, $notificationModel),
-            'status_id' => $notificationModel->getNotificationStatusNewId(),
+            'status_id' => $prevStatusId,
             'notes' => $notes
         ]);
     }
