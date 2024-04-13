@@ -10,15 +10,21 @@ use d3system\exceptions\D3ActiveRecordException;
 
 class D3nStatusDictionary{
 
-    private const CACHE_KEY_LIST = 'D3nStatusDictionaryList1';
+    private const CACHE_KEY_LIST = 'D3nStatusDictionaryList';
     private const CACHE_KEY_NOTIFICATION_LIST = 'D3nStatusDictionaryNotificationList1';
 
+    /**
+     * @throws D3ActiveRecordException
+     */
     public static function getIdByNotificationStatus(
         int $sysModelId,
-        Notification $notification
+        Notification $notification,
+        int $statusId = null
     ): int
     {
-        $statusId = $notification->getNotificationStatusId();
+        if (!$statusId) {
+            $statusId = $notification->getNotificationStatusId();
+        }
         $key = $sysModelId . '-' . $statusId;
         if($id = self::getListByNotification()[$key]??0){
             return $id;
