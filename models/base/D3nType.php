@@ -4,6 +4,7 @@
 
 namespace d3yii2\d3notification\models\base;
 
+use d3system\dictionaries\SysModelsDictionary;
 use Yii;
 
 /**
@@ -41,7 +42,7 @@ abstract class D3nType extends \d3system\models\D3ActiveRecord
             'tinyint Unsigned' => [['sys_model_id','type_id'],'integer' ,'min' => 0 ,'max' => 255],
             'smallint Unsigned' => [['id'],'integer' ,'min' => 0 ,'max' => 65535],
             [['label'], 'string', 'max' => 50],
-            [['sys_model_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3notification\models\SysModels::className(), 'targetAttribute' => ['sys_model_id' => 'id']]
+            ['sys_model_id', 'in', 'range' => array_keys(SysModelsDictionary::getClassList())]
         ];
     }
 
